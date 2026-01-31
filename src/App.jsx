@@ -1,9 +1,12 @@
 import { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
+import * as THREE from 'three';
+import CLOUDS from 'vanta/dist/vanta.clouds.min';
+import Particles from './Particles';
 import { projects, skills, tools } from './data/projects';
 import './App.css';
 
-// Custom Star Cursor with Stardust Trail
+// Custom Star Cursor with Stardust Trail - Dreamy Pastel Theme
 const StarCursor = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [trail, setTrail] = useState([]);
@@ -86,22 +89,16 @@ const StarCursor = () => {
         <svg viewBox="0 0 24 24" width="30" height="30">
           <defs>
             <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FF6B9D" />
-              <stop offset="50%" stopColor="#FF8EC7" />
-              <stop offset="100%" stopColor="#FFB6D9" />
+              <stop offset="0%" stopColor="#FFB6D9" />
+              <stop offset="50%" stopColor="#FFC4E1" />
+              <stop offset="100%" stopColor="#E8B4D9" />
             </linearGradient>
-            <filter id="starGlow">
-              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
           </defs>
           <path
             d="M12 0L14.59 8.41L23 11L14.59 13.59L12 22L9.41 13.59L1 11L9.41 8.41L12 0Z"
             fill="url(#starGradient)"
-            filter="url(#starGlow)"
+            stroke="#ffffff"
+            strokeWidth="0.8"
           />
         </svg>
         <div className="cursor-sparkles">
@@ -132,203 +129,49 @@ const StarCursor = () => {
   );
 };
 
-// 3D Disney/Pixar Style Clouds
-const Clouds3D = () => {
-  const { scrollYProgress } = useScroll();
+// Helper function to interpolate between two hex colors
+const lerpColor = (color1, color2, t) => {
+  const r1 = (color1 >> 16) & 0xff;
+  const g1 = (color1 >> 8) & 0xff;
+  const b1 = color1 & 0xff;
 
-  // Generate random cloud configurations
-  const cloudConfigs = [
-    { id: 1, x: '5%', y: '8%', scale: 1.2, speed: 0.3, rotation: -5 },
-    { id: 2, x: '25%', y: '15%', scale: 0.8, speed: 0.5, rotation: 3 },
-    { id: 3, x: '60%', y: '5%', scale: 1.4, speed: 0.2, rotation: -2 },
-    { id: 4, x: '80%', y: '20%', scale: 0.9, speed: 0.4, rotation: 5 },
-    { id: 5, x: '15%', y: '35%', scale: 1.1, speed: 0.35, rotation: -3 },
-    { id: 6, x: '45%', y: '25%', scale: 1.3, speed: 0.25, rotation: 2 },
-    { id: 7, x: '70%', y: '40%', scale: 0.7, speed: 0.45, rotation: -4 },
-    { id: 8, x: '90%', y: '10%', scale: 1.0, speed: 0.3, rotation: 1 },
-    { id: 9, x: '35%', y: '45%', scale: 0.85, speed: 0.4, rotation: -1 },
-    { id: 10, x: '55%', y: '50%', scale: 0.75, speed: 0.5, rotation: 4 },
-  ];
+  const r2 = (color2 >> 16) & 0xff;
+  const g2 = (color2 >> 8) & 0xff;
+  const b2 = color2 & 0xff;
 
-  return (
-    <div className="clouds-3d-container">
-      {cloudConfigs.map((config) => {
-        const yOffset = useTransform(scrollYProgress, [0, 1], [0, 100 * config.speed]);
+  const r = Math.round(r1 + (r2 - r1) * t);
+  const g = Math.round(g1 + (g2 - g1) * t);
+  const b = Math.round(b1 + (b2 - b1) * t);
 
-        return (
-          <motion.div
-            key={config.id}
-            className="cloud-3d"
-            style={{
-              left: config.x,
-              top: config.y,
-              scale: config.scale,
-              y: yOffset,
-              rotate: config.rotation,
-            }}
-          >
-            <div className="cloud-3d-body">
-              <div className="cloud-puff cloud-puff-1"></div>
-              <div className="cloud-puff cloud-puff-2"></div>
-              <div className="cloud-puff cloud-puff-3"></div>
-              <div className="cloud-puff cloud-puff-4"></div>
-              <div className="cloud-puff cloud-puff-5"></div>
-              <div className="cloud-base"></div>
-            </div>
-          </motion.div>
-        );
-      })}
-    </div>
-  );
+  return (r << 16) | (g << 8) | b;
 };
 
-// 3D Aesthetic Sun
-const Sun3D = () => {
-  const { scrollYProgress } = useScroll();
-  const sunY = useTransform(scrollYProgress, [0, 0.5, 1], ['5vh', '30vh', '60vh']);
-  const sunScale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.8, 1, 1.2, 1.5]);
-
-  // Sun color transitions from bright yellow (sunrise) to orange/red (sunset)
-  const sunColor1 = useTransform(
-    scrollYProgress,
-    [0, 0.3, 0.7, 1],
-    ['#FFE873', '#FFD700', '#FF8C42', '#FF6B35']
-  );
-  const sunColor2 = useTransform(
-    scrollYProgress,
-    [0, 0.3, 0.7, 1],
-    ['#FFF9C4', '#FFEB3B', '#FF7043', '#FF5722']
-  );
-  const glowColor = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    ['rgba(255, 236, 179, 0.6)', 'rgba(255, 183, 77, 0.5)', 'rgba(255, 87, 34, 0.4)']
-  );
-
-  return (
-    <motion.div
-      className="sun-3d"
-      style={{ y: sunY, scale: sunScale }}
-    >
-      <motion.div
-        className="sun-glow-outer"
-        style={{ background: glowColor }}
-      />
-      <motion.div className="sun-glow-middle" />
-      <motion.div className="sun-body">
-        <div className="sun-surface">
-          <div className="sun-highlight"></div>
-          <div className="sun-highlight-2"></div>
-        </div>
-      </motion.div>
-
-      {/* Sun rays */}
-      <div className="sun-rays-container">
-        {[...Array(12)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="sun-ray-3d"
-            style={{ transform: `rotate(${i * 30}deg)` }}
-            animate={{ opacity: [0.3, 0.7, 0.3] }}
-            transition={{ duration: 2, repeat: Infinity, delay: i * 0.1 }}
-          />
-        ))}
-      </div>
-    </motion.div>
-  );
+// Sunrise and Sunset color configurations
+const sunriseColors = {
+  backgroundColor: 0x89f0d1,
+  skyColor: 0x0dbff7,
+  cloudColor: 0xdbadde,
+  cloudShadowColor: 0x631f82,
+  sunColor: 0xff9919,
+  sunGlareColor: 0xffb632,
+  sunlightColor: 0xfff231,
 };
 
-// Stars for sunset/night sky
-const Stars = () => {
-  const { scrollYProgress } = useScroll();
-  const starsOpacity = useTransform(scrollYProgress, [0.5, 0.7, 1], [0, 0.5, 1]);
-
-  const starPositions = [
-    { x: '10%', y: '15%', size: 2, delay: 0 },
-    { x: '20%', y: '8%', size: 3, delay: 0.5 },
-    { x: '35%', y: '20%', size: 2, delay: 1 },
-    { x: '45%', y: '5%', size: 4, delay: 0.3 },
-    { x: '55%', y: '18%', size: 2, delay: 0.8 },
-    { x: '65%', y: '10%', size: 3, delay: 0.2 },
-    { x: '75%', y: '22%', size: 2, delay: 0.6 },
-    { x: '85%', y: '12%', size: 3, delay: 0.4 },
-    { x: '92%', y: '25%', size: 2, delay: 0.9 },
-    { x: '8%', y: '30%', size: 2, delay: 1.1 },
-    { x: '28%', y: '35%', size: 3, delay: 0.7 },
-    { x: '50%', y: '28%', size: 4, delay: 0.1 },
-    { x: '72%', y: '32%', size: 2, delay: 1.2 },
-    { x: '88%', y: '38%', size: 3, delay: 0.5 },
-    { x: '15%', y: '45%', size: 2, delay: 0.9 },
-    { x: '40%', y: '42%', size: 3, delay: 0.3 },
-    { x: '60%', y: '48%', size: 2, delay: 0.7 },
-    { x: '82%', y: '45%', size: 4, delay: 0.2 },
-    { x: '5%', y: '55%', size: 2, delay: 1.0 },
-    { x: '30%', y: '58%', size: 3, delay: 0.4 },
-    { x: '95%', y: '52%', size: 2, delay: 0.6 },
-  ];
-
-  return (
-    <motion.div className="stars-container" style={{ opacity: starsOpacity }}>
-      {starPositions.map((star, i) => (
-        <motion.div
-          key={i}
-          className="star"
-          style={{
-            left: star.x,
-            top: star.y,
-            width: star.size,
-            height: star.size,
-          }}
-          animate={{
-            opacity: [0.3, 1, 0.3],
-            scale: [0.8, 1.2, 0.8],
-          }}
-          transition={{
-            duration: 2 + Math.random(),
-            repeat: Infinity,
-            delay: star.delay,
-          }}
-        />
-      ))}
-    </motion.div>
-  );
-};
-
-// Floating elements (reduced, no birds/butterflies)
-const FloatingElements = () => {
-  const elements = ['🎨', '✨', '🎬', '💫', '🌟'];
-
-  return (
-    <div className="floating-elements">
-      {elements.map((emoji, i) => (
-        <motion.div
-          key={i}
-          className="floating-element"
-          style={{
-            left: `${10 + (i * 18)}%`,
-            top: `${20 + (i * 12)}%`,
-          }}
-          animate={{
-            y: [0, -30, 0],
-            rotate: [0, 10, -10, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 3 + (i * 0.5),
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: i * 0.3,
-          }}
-        >
-          {emoji}
-        </motion.div>
-      ))}
-    </div>
-  );
+const sunsetColors = {
+  backgroundColor: 0x89f0d1,
+  skyColor: 0x0a13aa,
+  cloudColor: 0xcd78d7,
+  cloudShadowColor: 0x2e24f2,
+  sunColor: 0xffffff,
+  sunGlareColor: 0xfcfcfc,
+  sunlightColor: 0xfcfcfc,
 };
 
 function App() {
   const containerRef = useRef(null);
+  const vantaRef = useRef(null);
+  const [vantaEffect, setVantaEffect] = useState(null);
+  const [particlesOpacity, setParticlesOpacity] = useState(0);
   const { scrollYProgress } = useScroll();
   const [selectedProject, setSelectedProject] = useState(null);
 
@@ -337,32 +180,78 @@ function App() {
   // Parallax values
   const y1 = useTransform(smoothProgress, [0, 1], [0, -500]);
 
+  // Initialize Vanta clouds effect with sunrise colors
+  useEffect(() => {
+    if (!vantaEffect && vantaRef.current) {
+      setVantaEffect(
+        CLOUDS({
+          el: vantaRef.current,
+          THREE: THREE,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          speed: 1.0,
+          ...sunriseColors,
+        })
+      );
+    }
+    return () => {
+      if (vantaEffect) vantaEffect.destroy();
+    };
+  }, [vantaEffect]);
+
+  // Update Vanta colors and particles opacity based on scroll position
+  useEffect(() => {
+    if (!vantaEffect) return;
+
+    const unsubscribe = scrollYProgress.on('change', (progress) => {
+      // Smooth transition from sunrise (0) to sunset (1)
+      const t = progress;
+
+      vantaEffect.setOptions({
+        backgroundColor: lerpColor(sunriseColors.backgroundColor, sunsetColors.backgroundColor, t),
+        skyColor: lerpColor(sunriseColors.skyColor, sunsetColors.skyColor, t),
+        cloudColor: lerpColor(sunriseColors.cloudColor, sunsetColors.cloudColor, t),
+        cloudShadowColor: lerpColor(sunriseColors.cloudShadowColor, sunsetColors.cloudShadowColor, t),
+        sunColor: lerpColor(sunriseColors.sunColor, sunsetColors.sunColor, t),
+        sunGlareColor: lerpColor(sunriseColors.sunGlareColor, sunsetColors.sunGlareColor, t),
+        sunlightColor: lerpColor(sunriseColors.sunlightColor, sunsetColors.sunlightColor, t),
+      });
+
+      // Fade in particles after 50% scroll (sunset mode)
+      const particlesFade = Math.max(0, (progress - 0.5) * 2);
+      setParticlesOpacity(particlesFade);
+    });
+
+    return () => unsubscribe();
+  }, [vantaEffect, scrollYProgress]);
+
   return (
     <div className="app" ref={containerRef}>
       {/* Star Cursor */}
       <StarCursor />
 
-      {/* Dynamic Sky Background */}
-      <motion.div
-        className="sky-background"
-        style={{
-          background: useTransform(
-            scrollYProgress,
-            [0, 0.3, 0.6, 1],
-            [
-              'linear-gradient(180deg, #87CEEB 0%, #B0E2FF 30%, #E0F4FF 60%, #FFF8E7 100%)',
-              'linear-gradient(180deg, #7EC8E3 0%, #98D1F5 30%, #FFE4B5 60%, #FFDAB9 100%)',
-              'linear-gradient(180deg, #FF9A56 0%, #FF7F50 30%, #FF6347 60%, #DC143C 100%)',
-              'linear-gradient(180deg, #2C1654 0%, #4A1942 30%, #6B2D5C 50%, #1a1a2e 100%)'
-            ]
-          )
-        }}
+      {/* Vanta Clouds Background */}
+      <div ref={vantaRef} className="vanta-clouds-background" />
+
+      {/* Sunset Stars Particles - only visible in sunset mode, positioned in sky area */}
+      <div
+        className="particles-container"
+        style={{ opacity: particlesOpacity }}
       >
-        <Sun3D />
-        <Clouds3D />
-        <Stars />
-        <FloatingElements />
-      </motion.div>
+        <Particles
+          particleColors={["#f28fff", "#ffffff", "#c9a0ff"]}
+          particleCount={800}
+          particleSpread={18}
+          speed={0.05}
+          particleBaseSize={150}
+          moveParticlesOnHover
+          alphaParticles
+          disableRotation={false}
+        />
+      </div>
 
       {/* Progress Bar */}
       <motion.div
@@ -381,7 +270,7 @@ function App() {
           className="nav-logo"
           whileHover={{ scale: 1.1, rotate: 5 }}
         >
-          ✨ motion.
+          ✨ meshmeadow.
         </motion.span>
         <div className="nav-links">
           {['Work', 'About', 'Contact'].map((item, i) => (

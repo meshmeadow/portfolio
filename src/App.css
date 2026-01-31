@@ -24,17 +24,18 @@
   position: fixed;
   pointer-events: none;
   z-index: 10001;
+  filter: drop-shadow(0 0 12px rgba(255, 182, 217, 0.8)) drop-shadow(0 0 25px rgba(255, 173, 210, 0.5));
 }
 
 .stardust-particle {
   position: fixed;
   pointer-events: none;
   font-size: 12px;
-  color: #FF6B9D;
+  color: #FFB6D9;
   text-shadow:
-    0 0 10px #FF6B9D,
-    0 0 20px #FF8EC7,
-    0 0 30px #FFB6D9;
+    0 0 8px rgba(255, 182, 217, 0.9),
+    0 0 16px rgba(255, 173, 210, 0.6),
+    0 0 24px rgba(232, 180, 217, 0.4);
   z-index: 10000;
 }
 
@@ -47,270 +48,32 @@
 .sparkle {
   position: absolute;
   font-size: 10px;
-  color: #FFB6D9;
-  text-shadow: 0 0 8px #FF6B9D;
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
   transform: translate(-50%, -50%);
 }
 
-/* ==================== SKY BACKGROUND ==================== */
-.sky-background {
+/* ==================== VANTA CLOUDS BACKGROUND ==================== */
+.vanta-clouds-background {
   position: fixed;
   inset: 0;
-  pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  transition: background 0.5s ease;
 }
 
-/* ==================== 3D DISNEY/PIXAR CLOUDS ==================== */
-.clouds-3d-container {
+/* ==================== SUNSET PARTICLES (STARS) ==================== */
+.particles-container {
   position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.cloud-3d {
-  position: absolute;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-}
-
-.cloud-3d-body {
-  position: relative;
-  width: 180px;
-  height: 100px;
-  transform-style: preserve-3d;
-}
-
-.cloud-puff {
-  position: absolute;
-  background: linear-gradient(180deg,
-    #ffffff 0%,
-    #f8f9ff 40%,
-    #e8f0ff 70%,
-    #d4e5ff 100%
-  );
-  border-radius: 50%;
-  box-shadow:
-    inset -15px -15px 30px rgba(180, 200, 230, 0.4),
-    inset 10px 10px 20px rgba(255, 255, 255, 0.9),
-    0 20px 40px rgba(100, 150, 200, 0.15),
-    0 5px 15px rgba(100, 150, 200, 0.1);
-}
-
-.cloud-puff-1 {
-  width: 90px;
-  height: 90px;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-}
-
-.cloud-puff-2 {
-  width: 75px;
-  height: 75px;
-  top: 25px;
-  left: 15px;
-  z-index: 4;
-}
-
-.cloud-puff-3 {
-  width: 70px;
-  height: 70px;
-  top: 30px;
-  right: 15px;
-  z-index: 4;
-}
-
-.cloud-puff-4 {
-  width: 55px;
-  height: 55px;
-  top: 45px;
-  left: -5px;
-  z-index: 3;
-}
-
-.cloud-puff-5 {
-  width: 50px;
-  height: 50px;
-  top: 50px;
-  right: -5px;
-  z-index: 3;
-}
-
-.cloud-base {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 160px;
-  height: 50px;
-  background: linear-gradient(180deg,
-    #f0f5ff 0%,
-    #e0eaff 50%,
-    #d0dfff 100%
-  );
-  border-radius: 0 0 80px 80px / 0 0 50px 50px;
-  box-shadow:
-    inset 0 -10px 20px rgba(180, 200, 230, 0.3),
-    0 10px 30px rgba(100, 150, 200, 0.2);
-  z-index: 2;
-}
-
-/* Cloud shadow on ground */
-.cloud-3d::after {
-  content: '';
-  position: absolute;
-  bottom: -80px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 30px;
-  background: radial-gradient(ellipse, rgba(100, 120, 150, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-}
-
-/* ==================== 3D SUN ==================== */
-.sun-3d {
-  position: fixed;
-  top: 5%;
-  right: 10%;
-  width: 150px;
-  height: 150px;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50vh; /* Only in the sky area, above the clouds */
   z-index: 1;
-}
-
-.sun-glow-outer {
-  position: absolute;
-  inset: -60px;
-  border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.6;
-}
-
-.sun-glow-middle {
-  position: absolute;
-  inset: -30px;
-  background: radial-gradient(circle,
-    rgba(255, 236, 179, 0.8) 0%,
-    rgba(255, 200, 100, 0.4) 50%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  filter: blur(20px);
-}
-
-.sun-body {
-  position: absolute;
-  inset: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg,
-    #FFF9C4 0%,
-    #FFE082 20%,
-    #FFD54F 40%,
-    #FFCA28 60%,
-    #FFB300 80%,
-    #FF8F00 100%
-  );
-  box-shadow:
-    inset -20px -20px 40px rgba(255, 143, 0, 0.5),
-    inset 15px 15px 30px rgba(255, 255, 200, 0.8),
-    0 0 60px rgba(255, 193, 7, 0.6),
-    0 0 120px rgba(255, 152, 0, 0.4);
-  overflow: hidden;
-}
-
-.sun-surface {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  overflow: hidden;
-}
-
-.sun-highlight {
-  position: absolute;
-  top: 15%;
-  left: 20%;
-  width: 30%;
-  height: 25%;
-  background: radial-gradient(ellipse,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(255, 255, 200, 0.5) 50%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  transform: rotate(-30deg);
-}
-
-.sun-highlight-2 {
-  position: absolute;
-  top: 25%;
-  left: 30%;
-  width: 15%;
-  height: 10%;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 50%;
-  filter: blur(3px);
-}
-
-.sun-rays-container {
-  position: absolute;
-  inset: -20px;
-  animation: rotateSlow 60s linear infinite;
-}
-
-.sun-ray-3d {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200px;
-  height: 4px;
-  background: linear-gradient(90deg,
-    rgba(255, 236, 179, 0.8) 0%,
-    rgba(255, 200, 100, 0.4) 30%,
-    transparent 70%
-  );
-  transform-origin: left center;
-  border-radius: 2px;
-}
-
-@keyframes rotateSlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ==================== STARS ==================== */
-.stars-container {
-  position: fixed;
-  inset: 0;
   pointer-events: none;
-  z-index: 1;
+  transition: opacity 0.5s ease;
 }
 
-.star {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  box-shadow:
-    0 0 6px 2px rgba(255, 255, 255, 0.8),
-    0 0 12px 4px rgba(255, 255, 255, 0.4);
-}
 
-/* ==================== FLOATING ELEMENTS ==================== */
-.floating-elements {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-}
-
-.floating-element {
-  position: absolute;
-  font-size: 2rem;
-  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
-}
 
 /* ==================== PROGRESS BAR ==================== */
 .progress-bar {
@@ -342,7 +105,7 @@
 }
 
 .nav-logo {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 1.25rem;
   font-weight: 700;
   color: #1e293b;
@@ -640,7 +403,7 @@
 }
 
 .stat-number {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 4px;
@@ -893,15 +656,17 @@
 .footer {
   text-align: center;
   padding: 60px 24px;
-  color: #475569;
+  color: #6B7280;
 }
 
 .footer p {
   margin-bottom: 8px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .footer-copyright {
   font-size: 0.9rem;
+  color: #9CA3AF;
 }
 
 /* ==================== MODAL ==================== */
@@ -1025,23 +790,6 @@
   .cta-button {
     width: 100%;
     justify-content: center;
-  }
-
-  .cloud-3d-body {
-    width: 120px;
-    height: 70px;
-  }
-
-  .cloud-puff-1 { width: 60px; height: 60px; }
-  .cloud-puff-2 { width: 50px; height: 50px; }
-  .cloud-puff-3 { width: 45px; height: 45px; }
-  .cloud-puff-4 { width: 35px; height: 35px; }
-  .cloud-puff-5 { width: 30px; height: 30px; }
-  .cloud-base { width: 100px; height: 35px; }
-
-  .sun-3d {
-    width: 100px;
-    height: 100px;
   }
 
   .projects-flow {
