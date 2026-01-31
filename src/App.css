@@ -95,20 +95,52 @@
   transform: translateX(-50%);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
+  background: #FF4196;
   border-radius: 100px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: none;
+  box-shadow: 0 8px 32px rgba(255, 65, 150, 0.3);
   z-index: 100;
 }
 
+.rainbow-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+}
+
 .nav-logo {
+  display: flex;
+  align-items: center;
   font-family: 'Playfair Display', serif;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #ffffff;
+  position: relative;
+}
+
+.nav-logo:hover {
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #ffffff 35%,
+    #FFD700 50%,
+    #ffffff 65%,
+    #ffffff 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmerText 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmerText {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
 }
 
 .nav-links {
@@ -123,6 +155,44 @@
   font-size: 0.9rem;
   border-radius: 50px;
   transition: transform 0.2s;
+  background: transparent !important;
+  border: 1px solid white;
+}
+
+/* Hamburger Menu */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 101;
+}
+
+.hamburger-line {
+  width: 22px;
+  height: 2.5px;
+  background: #ffffff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger.active .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
 }
 
 /* ==================== SCROLL CONTENT ==================== */
@@ -157,12 +227,12 @@
 }
 
 .hero-title {
-  font-size: clamp(3rem, 10vw, 6rem);
+  font-size: clamp(2rem, 6vw, 3.5rem);
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 24px;
-  color: #1e293b;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  color: #1f1f1f;
+  text-shadow: none;
 }
 
 .title-line {
@@ -170,11 +240,93 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #FF6B9D, #A855F7, #3B82F6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1f1f1f;
+  -webkit-text-fill-color: #1f1f1f;
 }
+
+/* Bouncing text animation */
+.bounce-text {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+  transition: text-shadow 0.4s ease;
+}
+
+.bounce-text:hover {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.bounce-letter {
+  display: inline-block;
+  animation: none;
+}
+
+.bounce-text:hover .bounce-letter {
+  animation: bounceWave 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes bounceWave {
+  0% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-12px);
+  }
+  60% {
+    transform: translateY(0);
+  }
+  80% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Stardust container */
+.text-stars {
+  position: absolute;
+  inset: -10px -30px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.text-star {
+  position: absolute;
+  color: white;
+  font-size: 6px;
+  opacity: 0;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+}
+
+.bounce-text:hover .text-star {
+  animation: dustFloat 1.2s ease-out forwards;
+}
+
+.text-star:nth-child(1) { top: 40%; left: 0; animation-delay: 0.1s; }
+.text-star:nth-child(2) { top: 60%; left: 5%; animation-delay: 0.25s; }
+.text-star:nth-child(3) { top: 40%; right: 0; animation-delay: 0.15s; }
+.text-star:nth-child(4) { top: 60%; right: 5%; animation-delay: 0.3s; }
+
+@keyframes dustFloat {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+  }
+  20% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx, -20px), var(--ty, -15px)) scale(0.3);
+  }
+}
+
+.text-star:nth-child(1) { --tx: -25px; --ty: -20px; }
+.text-star:nth-child(2) { --tx: -20px; --ty: 15px; }
+.text-star:nth-child(3) { --tx: 25px; --ty: -20px; }
+.text-star:nth-child(4) { --tx: 20px; --ty: 15px; }
 
 .hero-subtitle {
   font-size: clamp(1.1rem, 2.5vw, 1.5rem);
@@ -666,7 +818,7 @@
 
 .footer-copyright {
   font-size: 0.9rem;
-  color: #9CA3AF;
+  color: #ffffff;
 }
 
 /* ==================== MODAL ==================== */
@@ -765,16 +917,54 @@
 
   .floating-nav {
     padding: 10px 16px;
-    gap: 12px;
+    gap: 10px;
+    width: auto;
+    max-width: calc(100% - 40px);
+    justify-content: center;
+  }
+
+  .hamburger {
+    display: flex;
   }
 
   .nav-logo {
-    font-size: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.2) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 20px;
+    border: 1.5px solid rgba(248, 137, 188, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .nav-links.show {
+    opacity: 1;
+    visibility: visible;
   }
 
   .nav-link {
-    padding: 6px 14px;
-    font-size: 0.8rem;
+    padding: 10px 24px;
+    font-size: 0.9rem;
+    text-align: center;
   }
 
   .hero-area {
@@ -855,15 +1045,17 @@
   .floating-nav {
     top: 10px;
     width: calc(100% - 20px);
+    padding: 8px 12px;
+    gap: 8px;
   }
 
-  .nav-links {
-    gap: 4px;
+  .nav-logo {
+    font-size: 0.85rem;
   }
 
   .nav-link {
-    padding: 6px 10px;
-    font-size: 0.75rem;
+    padding: 10px 20px;
+    font-size: 0.85rem;
   }
 
   .floating-element {

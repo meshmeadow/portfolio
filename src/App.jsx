@@ -172,6 +172,7 @@ function App() {
   const vantaRef = useRef(null);
   const [vantaEffect, setVantaEffect] = useState(null);
   const [particlesOpacity, setParticlesOpacity] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const [selectedProject, setSelectedProject] = useState(null);
 
@@ -245,7 +246,7 @@ function App() {
           particleColors={["#f28fff", "#ffffff", "#c9a0ff"]}
           particleCount={800}
           particleSpread={18}
-          speed={0.05}
+          speed={0.3}
           particleBaseSize={150}
           moveParticlesOnHover
           alphaParticles
@@ -261,26 +262,40 @@ function App() {
 
       {/* Floating Navigation */}
       <motion.nav
-        className="floating-nav"
+        className={`floating-nav ${menuOpen ? 'menu-open' : ''}`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ delay: 0.5, type: 'spring' }}
       >
         <motion.span
           className="nav-logo"
-          whileHover={{ scale: 1.1, rotate: 5 }}
+          whileHover={{ scale: 1.08 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
-          ✨ meshmeadow.
+          meshmeadow
         </motion.span>
-        <div className="nav-links">
+
+        {/* Hamburger Button */}
+        <button
+          className={`hamburger ${menuOpen ? 'active' : ''}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+        </button>
+
+        <div className={`nav-links ${menuOpen ? 'show' : ''}`}>
           {['Work', 'About', 'Contact'].map((item, i) => (
             <motion.a
               key={item}
               href={`#${item.toLowerCase()}`}
               className="nav-link"
               whileHover={{ scale: 1.1, y: -3 }}
+              onClick={() => setMenuOpen(false)}
               style={{
-                background: `linear-gradient(135deg, ${['#FF6B9D', '#A855F7', '#3B82F6'][i]}, ${['#FF9F43', '#3B82F6', '#10B981'][i]})`,
+                background: 'linear-gradient(135deg, #F889BC, #F70CB4)',
               }}
             >
               {item}
@@ -297,24 +312,26 @@ function App() {
           className="hero-area"
           style={{ y: y1 }}
         >
-          <motion.div
-            className="hero-badge"
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, type: 'spring' }}
-          >
-            🎬 Motion Designer & Animator
-          </motion.div>
-
           <motion.h1
-            className="hero-title"
+            className="hero-title bounce-text"
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            <span className="title-line">Bringing</span>
-            <span className="title-line gradient-text">Ideas to Life</span>
-            <span className="title-line">Through Motion</span>
+            <div className="text-stars">
+              {[...Array(4)].map((_, i) => (
+                <span key={i} className="text-star">·</span>
+              ))}
+            </div>
+            {'making things move'.split('').map((letter, i) => (
+              <span
+                key={i}
+                className="bounce-letter"
+                style={{ animationDelay: `${i * 0.05}s` }}
+              >
+                {letter === ' ' ? '\u00A0' : letter}
+              </span>
+            ))}
           </motion.h1>
 
           <motion.p
@@ -359,14 +376,6 @@ function App() {
             <span className="scroll-arrow">↓</span>
           </motion.div>
         </motion.div>
-
-        {/* Decorative Divider */}
-        <div className="wave-divider">
-          <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,60 C300,120 600,0 900,60 C1050,90 1150,30 1200,60 L1200,120 L0,120 Z" fill="rgba(255,255,255,0.3)" />
-            <path d="M0,80 C300,140 600,20 900,80 C1050,110 1150,50 1200,80 L1200,120 L0,120 Z" fill="rgba(255,255,255,0.5)" />
-          </svg>
-        </div>
 
         {/* Work Section - Flowing Cards */}
         <div className="work-area" id="work">
@@ -657,7 +666,7 @@ function App() {
             viewport={{ once: true }}
           >
             <p>Made with 💖 and lots of ☕</p>
-            <p className="footer-copyright">© 2024 Motion Designer</p>
+            <p className="footer-copyright">© 2026 Motion Designer</p>
           </motion.div>
         </footer>
       </div>
