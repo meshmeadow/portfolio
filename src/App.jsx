@@ -175,6 +175,16 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const [selectedProject, setSelectedProject] = useState(null);
+  const [isTextAnimating, setIsTextAnimating] = useState(false);
+
+  // Handle hero text hover - complete animation even if cursor leaves
+  const handleTextHover = () => {
+    if (!isTextAnimating) {
+      setIsTextAnimating(true);
+      // Animation duration: 0.8s base + (18 letters * 0.05s delay) = ~1.7s total
+      setTimeout(() => setIsTextAnimating(false), 1700);
+    }
+  };
 
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
@@ -237,6 +247,12 @@ function App() {
       {/* Vanta Clouds Background */}
       <div ref={vantaRef} className="vanta-clouds-background" />
 
+      {/* Soft Checkerboard Grid Overlay - Sky Section Only */}
+      <div className="sky-grid-overlay">
+        <div className="checker-column-up"></div>
+        <div className="checker-column-down"></div>
+      </div>
+
       {/* Sunset Stars Particles - only visible in sunset mode, positioned in sky area */}
       <div
         className="particles-container"
@@ -272,6 +288,31 @@ function App() {
           whileHover={{ scale: 1.08 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
+          <span className="nav-logo-stardust">
+            {/* First orbiting trail - 8 stars */}
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            {/* Second orbiting trail (reverse) - 6 stars */}
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            <span className="orbit-star"></span>
+            {/* Twinkling static stars - 6 stars */}
+            <span className="twinkle-star"></span>
+            <span className="twinkle-star"></span>
+            <span className="twinkle-star"></span>
+            <span className="twinkle-star"></span>
+            <span className="twinkle-star"></span>
+            <span className="twinkle-star"></span>
+          </span>
           meshmeadow
         </motion.span>
 
@@ -313,10 +354,11 @@ function App() {
           style={{ y: y1 }}
         >
           <motion.h1
-            className="hero-title bounce-text"
+            className={`hero-title bounce-text ${isTextAnimating ? 'animating' : ''}`}
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
+            onMouseEnter={handleTextHover}
           >
             <div className="text-stars">
               {[...Array(4)].map((_, i) => (
@@ -332,6 +374,7 @@ function App() {
                 {letter === ' ' ? '\u00A0' : letter}
               </span>
             ))}
+            <span className="thoughtfully-text">thoughtfully</span>
           </motion.h1>
 
           <motion.p
@@ -355,15 +398,6 @@ function App() {
               whileTap={{ scale: 0.95 }}
             >
               <span>See My Work</span>
-              <span className="button-emoji">🚀</span>
-            </motion.button>
-            <motion.button
-              className="cta-button secondary"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span>Say Hello</span>
-              <span className="button-emoji">👋</span>
             </motion.button>
           </motion.div>
 
