@@ -17,7 +17,7 @@
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 80px;
+  gap: clamp(32px, 6vw, 80px);
   align-items: start;
 }
 
@@ -207,12 +207,12 @@
 
 @media (max-width: 968px) {
   .contact {
-    padding: 80px 0 0;
+    padding: 60px 0 0;
   }
 
   .grid {
     grid-template-columns: 1fr;
-    gap: 60px;
+    gap: 40px;
   }
 
   .info {
@@ -227,18 +227,87 @@
   .socialLinks {
     justify-content: center;
   }
+
+  .form {
+    padding: 32px 24px;
+  }
 }
 
 @media (max-width: 480px) {
+  .contact {
+    padding: 48px 0 0;
+  }
+
+  .grid {
+    gap: 32px;
+  }
+
   .form {
-    padding: 24px 20px;
+    padding: 20px 16px;
+  }
+
+  .formGroup {
+    margin-bottom: 18px;
+  }
+
+  .formGroup input,
+  .formGroup textarea {
+    padding: 14px 16px;
+    font-size: 0.95rem;
+  }
+
+  .formGroup textarea {
+    min-height: 100px;
   }
 
   .infoTitle {
     font-size: 1.5rem;
   }
 
+  .infoText {
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+  }
+
+  .socialLink {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+
+  .submitBtn {
+    padding: 16px 24px;
+    font-size: 0.95rem;
+  }
+
   .footer {
-    margin-top: 60px;
+    margin-top: 48px;
+    padding: 24px 0;
+  }
+
+  .footer p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .contact {
+    padding: 40px 0 0;
+  }
+
+  .form {
+    padding: 16px 12px;
+  }
+
+  .infoTitle {
+    font-size: 1.35rem;
+  }
+
+  .socialLinks {
+    gap: 8px;
+  }
+
+  .socialLink {
+    padding: 8px 14px;
+    font-size: 0.8rem;
   }
 }

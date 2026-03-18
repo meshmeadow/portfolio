@@ -177,6 +177,18 @@ function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isTextAnimating, setIsTextAnimating] = useState(false);
 
+  // Card-to-Modal spatial expansion state
+  const [cardRect, setCardRect] = useState(null);
+  const cardRefs = useRef({});
+
+  // Form submission states
+  const [formState, setFormState] = useState('idle'); // idle, sending, success, error
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+
+  // Active section tracking for nav
+  const [activeSection, setActiveSection] = useState('');
+  const sectionRefs = useRef({});
+
   // Handle hero text hover - complete animation even if cursor leaves
   const handleTextHover = () => {
     if (!isTextAnimating) {
@@ -185,6 +197,69 @@ function App() {
       setTimeout(() => setIsTextAnimating(false), 1700);
     }
   };
+
+  // Handle project card click - capture position for spatial expansion
+  const handleProjectClick = (project, index) => {
+    const cardElement = cardRefs.current[index];
+    if (cardElement) {
+      const rect = cardElement.getBoundingClientRect();
+      setCardRect({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        width: rect.width,
+        height: rect.height,
+      });
+    }
+    setSelectedProject(project);
+  };
+
+  // Handle form submission with states
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (formState === 'sending') return;
+
+    setFormState('sending');
+
+    // Simulate API call - replace with actual submission
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setFormState('success');
+      // Reset after showing success
+      setTimeout(() => {
+        setFormState('idle');
+        setFormData({ name: '', email: '', message: '' });
+      }, 3000);
+    } catch (error) {
+      setFormState('error');
+      setTimeout(() => setFormState('idle'), 3000);
+    }
+  };
+
+  // Track active section based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['work', 'about', 'contact'];
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(section);
+            return;
+          }
+        }
+      }
+      // If at top, no section is active
+      if (window.scrollY < window.innerHeight * 0.5) {
+        setActiveSection('');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
@@ -328,20 +403,29 @@ function App() {
         </button>
 
         <div className={`nav-links ${menuOpen ? 'show' : ''}`}>
-          {['Work', 'About', 'Contact'].map((item, i) => (
-            <motion.a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="nav-link"
-              whileHover={{ scale: 1.1, y: -3 }}
-              onClick={() => setMenuOpen(false)}
-              style={{
-                background: 'linear-gradient(135deg, #F889BC, #F70CB4)',
-              }}
-            >
-              {item}
-            </motion.a>
-          ))}
+          {['Work', 'About', 'Contact'].map((item, i) => {
+            const isActive = activeSection === item.toLowerCase();
+            return (
+              <motion.a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className={`nav-link ${isActive ? 'nav-link-active' : ''}`}
+                whileHover={{ scale: 1.1, y: -3 }}
+                onClick={() => setMenuOpen(false)}
+                animate={isActive ? { scale: 1.05 } : { scale: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                {item}
+                {/* Active indicator dot that animates in */}
+                <motion.span
+                  className="nav-active-indicator"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={isActive ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                />
+              </motion.a>
+            );
+          })}
         </div>
       </motion.nav>
 
@@ -394,20 +478,13 @@ function App() {
           >
             <motion.button
               className="cta-button primary"
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(255, 107, 157, 0.4)' }}
               whileTap={{ scale: 0.95 }}
             >
-              <span>See My Work</span>
+              <span>Scroll to Explore</span>
             </motion.button>
-          </motion.div>
-
-          <motion.div
-            className="scroll-hint"
-            animate={{ y: [0, 15, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <span>Scroll to explore</span>
-            <span className="scroll-arrow">↓</span>
           </motion.div>
         </motion.div>
 
@@ -428,27 +505,38 @@ function App() {
             {projects.map((project, index) => (
               <motion.div
                 key={project.id}
+                ref={(el) => (cardRefs.current[index] = el)}
                 className={`project-card card-${index % 3}`}
                 initial={{ opacity: 0, y: 100, rotate: index % 2 === 0 ? -5 : 5 }}
                 whileInView={{ opacity: 1, y: 0, rotate: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.1, duration: 0.5, ease: [0, 0, 0.2, 1] }}
                 whileHover={{
                   scale: 1.03,
                   rotate: index % 2 === 0 ? 2 : -2,
                   boxShadow: '0 30px 60px rgba(0,0,0,0.2)',
+                  transition: { duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }
                 }}
-                onClick={() => setSelectedProject(project)}
+                onClick={() => handleProjectClick(project, index)}
                 style={{
                   marginLeft: index % 2 === 0 ? '5%' : '15%',
                   marginRight: index % 2 === 0 ? '15%' : '5%',
                 }}
+                layoutId={`project-card-${project.id}`}
               >
                 <div className="card-image">
-                  <img src={project.thumbnail} alt={project.title} />
-                  <div className="card-overlay">
+                  <motion.img
+                    src={project.thumbnail}
+                    alt={project.title}
+                    layoutId={`project-image-${project.id}`}
+                  />
+                  <motion.div
+                    className="card-overlay"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                  >
                     <span className="view-text">View Project ✨</span>
-                  </div>
+                  </motion.div>
                   <span className="card-category">
                     {project.category === 'lottie' ? '🎭 Lottie' : '🎬 Video'}
                   </span>
@@ -641,33 +729,163 @@ function App() {
               <p>Got a project in mind? I'd love to hear about it.</p>
             </div>
 
-            <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
+            <form className="contact-form" onSubmit={handleFormSubmit}>
               <div className="form-row">
-                <motion.input
-                  type="text"
-                  placeholder="Your Name ✨"
-                  whileFocus={{ scale: 1.02, boxShadow: '0 10px 30px rgba(168, 85, 247, 0.3)' }}
-                />
-                <motion.input
-                  type="email"
-                  placeholder="Your Email 📧"
-                  whileFocus={{ scale: 1.02, boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)' }}
-                />
+                <motion.div className="input-wrapper">
+                  <motion.input
+                    type="text"
+                    placeholder="Your Name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    whileFocus={{ scale: 1.02, boxShadow: '0 10px 30px rgba(168, 85, 247, 0.3)' }}
+                    disabled={formState === 'sending'}
+                    required
+                  />
+                  {formData.name && (
+                    <motion.span
+                      className="input-valid-check"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                    >
+                      ✓
+                    </motion.span>
+                  )}
+                </motion.div>
+                <motion.div className="input-wrapper">
+                  <motion.input
+                    type="email"
+                    placeholder="Your Email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    whileFocus={{ scale: 1.02, boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)' }}
+                    disabled={formState === 'sending'}
+                    required
+                  />
+                  {formData.email && formData.email.includes('@') && (
+                    <motion.span
+                      className="input-valid-check"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                    >
+                      ✓
+                    </motion.span>
+                  )}
+                </motion.div>
               </div>
-              <motion.textarea
-                placeholder="Tell me about your project... 🎨"
-                rows="5"
-                whileFocus={{ scale: 1.02, boxShadow: '0 10px 30px rgba(255, 107, 157, 0.3)' }}
-              />
+              <motion.div className="input-wrapper textarea-wrapper">
+                <motion.textarea
+                  placeholder="Tell me about your project..."
+                  rows="5"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  whileFocus={{ scale: 1.02, boxShadow: '0 10px 30px rgba(255, 107, 157, 0.3)' }}
+                  disabled={formState === 'sending'}
+                  required
+                />
+              </motion.div>
+
+              {/* Submit button with state-based animations */}
               <motion.button
                 type="submit"
-                className="submit-button"
-                whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(255, 107, 157, 0.4)' }}
-                whileTap={{ scale: 0.95 }}
+                className={`submit-button submit-${formState}`}
+                disabled={formState === 'sending' || formState === 'success'}
+                whileHover={formState === 'idle' ? { scale: 1.05, boxShadow: '0 20px 40px rgba(255, 107, 157, 0.4)' } : {}}
+                whileTap={formState === 'idle' ? { scale: 0.95 } : {}}
+                animate={
+                  formState === 'sending' ? { scale: [1, 0.98, 1] } :
+                  formState === 'success' ? { scale: [1, 1.1, 1] } :
+                  formState === 'error' ? { x: [0, -10, 10, -10, 10, 0] } : {}
+                }
+                transition={
+                  formState === 'sending' ? { duration: 1.5, repeat: Infinity } :
+                  formState === 'success' ? { duration: 0.5 } :
+                  formState === 'error' ? { duration: 0.5 } : {}
+                }
               >
-                <span>Send Message</span>
-                <span className="button-icon">🚀</span>
+                <AnimatePresence mode="wait">
+                  {formState === 'idle' && (
+                    <motion.span
+                      key="idle"
+                      className="button-content"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <span>Send Message</span>
+                      <span className="button-icon">🚀</span>
+                    </motion.span>
+                  )}
+                  {formState === 'sending' && (
+                    <motion.span
+                      key="sending"
+                      className="button-content"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <span>Sending</span>
+                      <motion.span
+                        className="button-icon"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      >
+                        ✨
+                      </motion.span>
+                    </motion.span>
+                  )}
+                  {formState === 'success' && (
+                    <motion.span
+                      key="success"
+                      className="button-content"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                    >
+                      <span>Message Sent!</span>
+                      <motion.span
+                        className="button-icon"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: [0, 1.3, 1] }}
+                        transition={{ duration: 0.4, delay: 0.1 }}
+                      >
+                        ✓
+                      </motion.span>
+                    </motion.span>
+                  )}
+                  {formState === 'error' && (
+                    <motion.span
+                      key="error"
+                      className="button-content"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <span>Try Again</span>
+                      <span className="button-icon">↻</span>
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </motion.button>
+
+              {/* Success message that appears below */}
+              <AnimatePresence>
+                {formState === 'success' && (
+                  <motion.p
+                    className="form-success-message"
+                    initial={{ opacity: 0, y: -10, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                    exit={{ opacity: 0, y: -10, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    Thanks for reaching out! I'll get back to you soon. ✨
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </form>
 
             <div className="social-links">
@@ -705,7 +923,7 @@ function App() {
         </footer>
       </div>
 
-      {/* Project Modal */}
+      {/* Project Modal with Spatial Expansion */}
       <AnimatePresence>
         {selectedProject && (
           <motion.div
@@ -713,26 +931,119 @@ function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedProject(null)}
+            transition={{ duration: 0.3 }}
+            onClick={() => {
+              setSelectedProject(null);
+              setCardRect(null);
+            }}
           >
             <motion.div
               className="modal-content"
-              initial={{ scale: 0.8, y: 100 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.8, y: 100 }}
+              initial={{
+                opacity: 0,
+                scale: cardRect ? 0.5 : 0.8,
+                y: cardRect ? cardRect.y - window.innerHeight / 2 : 100,
+                x: cardRect ? cardRect.x - window.innerWidth / 2 : 0,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                x: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: cardRect ? 0.5 : 0.8,
+                y: cardRect ? cardRect.y - window.innerHeight / 2 : 100,
+                x: cardRect ? cardRect.x - window.innerWidth / 2 : 0,
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 300,
+                damping: 30,
+              }}
               onClick={(e) => e.stopPropagation()}
             >
-              <button className="modal-close" onClick={() => setSelectedProject(null)}>✕</button>
-              <img src={selectedProject.thumbnail} alt={selectedProject.title} />
+              {/* Close button */}
+              <motion.button
+                className="modal-close"
+                onClick={() => {
+                  setSelectedProject(null);
+                  setCardRect(null);
+                }}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, type: 'spring', stiffness: 500 }}
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                ✕
+              </motion.button>
+
+              {/* Image reveals first */}
+              <motion.div
+                className="modal-image-wrapper"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <img src={selectedProject.thumbnail} alt={selectedProject.title} />
+              </motion.div>
+
+              {/* Content choreographed entrance */}
               <div className="modal-info">
-                <h3>{selectedProject.title}</h3>
-                <p className="modal-meta">{selectedProject.client} • {selectedProject.year}</p>
-                <p>{selectedProject.description}</p>
-                <div className="modal-tags">
-                  {selectedProject.tags.map(tag => (
-                    <span key={tag}>{tag}</span>
+                {/* Title enters first */}
+                <motion.h3
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15, duration: 0.4, ease: [0, 0, 0.2, 1] }}
+                >
+                  {selectedProject.title}
+                </motion.h3>
+
+                {/* Meta enters second */}
+                <motion.p
+                  className="modal-meta"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25, duration: 0.4, ease: [0, 0, 0.2, 1] }}
+                >
+                  {selectedProject.client} • {selectedProject.year}
+                </motion.p>
+
+                {/* Description enters third */}
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35, duration: 0.4, ease: [0, 0, 0.2, 1] }}
+                >
+                  {selectedProject.description}
+                </motion.p>
+
+                {/* Tags stagger in */}
+                <motion.div
+                  className="modal-tags"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.45 }}
+                >
+                  {selectedProject.tags.map((tag, i) => (
+                    <motion.span
+                      key={tag}
+                      initial={{ opacity: 0, scale: 0.8, x: -10 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      transition={{
+                        delay: 0.5 + i * 0.08,
+                        type: 'spring',
+                        stiffness: 500,
+                        damping: 25
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      {tag}
+                    </motion.span>
                   ))}
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           </motion.div>

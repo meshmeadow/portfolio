@@ -163,4 +163,74 @@
   .mobileMenuButton {
     display: flex;
   }
+
+  .logo {
+    font-size: 1.5rem;
+  }
+
+  .logoDot {
+    font-size: 1.75rem;
+  }
+
+  .mobileNav {
+    padding: 16px 20px;
+  }
+
+  .mobileNavLink {
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+
+  .mobileCta {
+    padding: 14px 24px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 16px 0;
+  }
+
+  .navbar.scrolled {
+    padding: 10px 0;
+  }
+
+  .logo {
+    font-size: 1.35rem;
+  }
+
+  .logoDot {
+    font-size: 1.5rem;
+  }
+
+  .mobileMenuButton {
+    width: 24px;
+    height: 18px;
+  }
+
+  .mobileNav {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .mobileNavLink {
+    font-size: 0.95rem;
+    padding: 8px 0;
+  }
+
+  .mobileCta {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .logoDot {
+    font-size: 1.35rem;
+  }
 }

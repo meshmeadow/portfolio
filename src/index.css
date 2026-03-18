@@ -5,6 +5,7 @@
 }
 
 :root {
+  /* ==================== COLOR TOKENS ==================== */
   --sky-top: #87CEEB;
   --sky-middle: #B0E2FF;
   --sky-bottom: #E0F4FF;
@@ -18,18 +19,41 @@
   --green-accent: #10B981;
   --orange-accent: #F97316;
   --yellow-accent: #FBBF24;
-  --text-dark: #1e293b;
-  --text-medium: #475569;
+  --text-dark: #831843;
+  --text-medium: #9D174D;
   --rainbow-1: #FF6B6B;
   --rainbow-2: #FF9F43;
   --rainbow-3: #FECA57;
   --rainbow-4: #48DBFB;
   --rainbow-5: #A855F7;
   --rainbow-6: #FF6B9D;
+
+  /* ==================== MOTION DESIGN SYSTEM ==================== */
+  /* Timing Scale - Every duration maps to a semantic purpose */
+  --duration-instant: 100ms;   /* Micro-feedback, state changes */
+  --duration-fast: 200ms;      /* Hover responses, small reveals */
+  --duration-normal: 300ms;    /* Standard transitions, navigation */
+  --duration-slow: 500ms;      /* Emphasis moments, card reveals */
+  --duration-dramatic: 800ms;  /* Hero animations, page transitions */
+  --duration-ambient: 2000ms;  /* Background loops, decorative motion */
+
+  /* Stagger Delays - For sequenced animations */
+  --stagger-tight: 50ms;       /* Characters in text, dense lists */
+  --stagger-normal: 80ms;      /* Card grids, menu items */
+  --stagger-loose: 120ms;      /* Spaced reveals, dramatic sequences */
+
+  /* Easing Vocabulary - Named by purpose, not shape */
+  --ease-enter: cubic-bezier(0.0, 0.0, 0.2, 1);      /* Elements arriving */
+  --ease-exit: cubic-bezier(0.4, 0.0, 1, 1);         /* Elements leaving */
+  --ease-move: cubic-bezier(0.4, 0.0, 0.2, 1);       /* Repositioning */
+  --ease-emphasis: cubic-bezier(0.34, 1.56, 0.64, 1); /* Attention-grabbing bounce */
+  --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);     /* General smooth motion */
 }
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -48,12 +72,48 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==================== FONT PREVIEW SYSTEM ==================== */
+/* Change --display-font to preview different options */
+:root {
+  /* OPTION 1: Outfit (geometric, friendly, modern) */
+  /* --display-font: 'Outfit', sans-serif; */
+
+  /* OPTION 2: Clash Display (bold, editorial, confident) */
+  /* --display-font: 'Clash Display', sans-serif; */
+
+  /* OPTION 3: Satoshi (clean, modern, characterful) */
+  /* --display-font: 'Satoshi', sans-serif; */
+
+  /* OPTION 4: Space Grotesk (techy, bold, geometric) */
+  /* --display-font: 'Space Grotesk', sans-serif; */
+
+  /* OPTION 5: Plus Jakarta Sans (friendly, professional) */
+  /* --display-font: 'Plus Jakarta Sans', sans-serif; */
+
+  /* CURRENT SELECTION - Change this line to try different fonts! */
+  --display-font: 'Fredoka', sans-serif;
+
+  /* SCRIPT FONT for "thoughtfully" - try these options: */
+  /* 'Caveat' - casual handwritten */
+  /* 'Pacifico' - retro script */
+  /* 'Dancing Script' - elegant cursive */
+  /* 'Satisfy' - flowing script */
+  /* 'Kalam' - handwritten marker */
+  /* 'Gochi Hand' - playful handwritten */
+  --script-font: 'Dancing Script', cursive;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--display-font);
   font-weight: 700;
   line-height: 1.2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -70,7 +130,21 @@ button {
 
 img, video {
   max-width: 100%;
+  height: auto;
   display: block;
+}
+
+/* Prevent horizontal overflow */
+*, *::before, *::after {
+  max-width: 100vw;
+}
+
+/* Global container padding for small screens */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 24px);
 }
 
 /* Custom Scrollbar */
