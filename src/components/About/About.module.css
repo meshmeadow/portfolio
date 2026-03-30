@@ -139,16 +139,80 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-primary);
-  background: var(--bg-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50px;
-  transition: all 0.3s ease;
+  /* Glass gradient */
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  /* 3D edge borders */
+  border: 1px solid transparent;
+  border-top-color: rgba(255, 255, 255, 0.45);
+  border-left-color: rgba(255, 255, 255, 0.32);
+  border-right-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+  border-radius: 18px;
+  transition: all 0.3s ease-out;
   cursor: default;
+  /* 3D shadow */
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: visible;
+}
+
+/* Specular highlight */
+.tool::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 10px;
+  width: 18px;
+  height: 5px;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.45) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Chromatic refraction */
+.tool::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 19px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 180, 200, 0.08) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(180, 200, 255, 0.06) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
 }
 
 .tool:hover {
-  border-color: var(--accent-primary);
-  background: rgba(99, 102, 241, 0.1);
+  transform: translateY(-2px);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  border-top-color: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.12),
+    0 6px 24px rgba(0, 0, 0, 0.2),
+    0 2px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
 }
 
 @media (max-width: 968px) {

@@ -3,7 +3,8 @@ import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'fra
 import * as THREE from 'three';
 import CLOUDS from 'vanta/dist/vanta.clouds.min';
 import Particles from './Particles';
-import { projects, skills, tools } from './data/projects';
+import SwiperCardsSlider from './components/SwiperCardsSlider/SwiperCardsSlider';
+import { projects, featuredProject, skills, tools } from './data/projects';
 import './App.css';
 
 // Custom Star Cursor with Stardust Trail - Dreamy Pastel Theme
@@ -172,14 +173,14 @@ function App() {
   const vantaRef = useRef(null);
   const [vantaEffect, setVantaEffect] = useState(null);
   const [particlesOpacity, setParticlesOpacity] = useState(0);
+  const [checkerOpacity, setCheckerOpacity] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const [selectedProject, setSelectedProject] = useState(null);
   const [isTextAnimating, setIsTextAnimating] = useState(false);
 
-  // Card-to-Modal spatial expansion state
+  // Modal expansion state
   const [cardRect, setCardRect] = useState(null);
-  const cardRefs = useRef({});
 
   // Form submission states
   const [formState, setFormState] = useState('idle'); // idle, sending, success, error
@@ -198,18 +199,15 @@ function App() {
     }
   };
 
-  // Handle project card click - capture position for spatial expansion
-  const handleProjectClick = (project, index) => {
-    const cardElement = cardRefs.current[index];
-    if (cardElement) {
-      const rect = cardElement.getBoundingClientRect();
-      setCardRect({
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-        width: rect.width,
-        height: rect.height,
-      });
-    }
+  // Handle project card click - open modal
+  const handleProjectClick = (project) => {
+    // Center position for modal expansion
+    setCardRect({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+      width: 400,
+      height: 300,
+    });
     setSelectedProject(project);
   };
 
@@ -309,6 +307,10 @@ function App() {
       // Fade in particles after 50% scroll (sunset mode)
       const particlesFade = Math.max(0, (progress - 0.5) * 2);
       setParticlesOpacity(particlesFade);
+
+      // Fade out checker pattern as scroll increases (visible at top, fades toward bottom)
+      const checkerFade = Math.max(0, 1 - progress * 2);
+      setCheckerOpacity(checkerFade);
     });
 
     return () => unsubscribe();
@@ -323,7 +325,7 @@ function App() {
       <div ref={vantaRef} className="vanta-clouds-background" />
 
       {/* Soft Checkerboard Grid Overlay - Sky Section Only */}
-      <div className="sky-grid-overlay">
+      <div className="sky-grid-overlay" style={{ opacity: checkerOpacity }}>
         <div className="checker-column-up"></div>
         <div className="checker-column-down"></div>
       </div>
@@ -488,7 +490,7 @@ function App() {
           </motion.div>
         </motion.div>
 
-        {/* Work Section - Flowing Cards */}
+        {/* Work Section - Featured Card Stack + Project Grid */}
         <div className="work-area" id="work">
           <motion.div
             className="section-header"
@@ -501,58 +503,53 @@ function App() {
             <p className="section-desc">A collection of motion magic</p>
           </motion.div>
 
-          <div className="projects-flow">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                ref={(el) => (cardRefs.current[index] = el)}
-                className={`project-card card-${index % 3}`}
-                initial={{ opacity: 0, y: 100, rotate: index % 2 === 0 ? -5 : 5 }}
-                whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ delay: index * 0.1, duration: 0.5, ease: [0, 0, 0.2, 1] }}
-                whileHover={{
-                  scale: 1.03,
-                  rotate: index % 2 === 0 ? 2 : -2,
-                  boxShadow: '0 30px 60px rgba(0,0,0,0.2)',
-                  transition: { duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }
-                }}
-                onClick={() => handleProjectClick(project, index)}
-                style={{
-                  marginLeft: index % 2 === 0 ? '5%' : '15%',
-                  marginRight: index % 2 === 0 ? '15%' : '5%',
-                }}
-                layoutId={`project-card-${project.id}`}
-              >
-                <div className="card-image">
-                  <motion.img
-                    src={project.thumbnail}
-                    alt={project.title}
-                    layoutId={`project-image-${project.id}`}
-                  />
-                  <motion.div
-                    className="card-overlay"
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                  >
-                    <span className="view-text">View Project ✨</span>
-                  </motion.div>
-                  <span className="card-category">
-                    {project.category === 'lottie' ? '🎭 Lottie' : '🎬 Video'}
-                  </span>
-                </div>
-                <div className="card-content">
-                  <h3>{project.title}</h3>
-                  <p>{project.client} • {project.year}</p>
-                  <div className="card-tags">
-                    {project.tags.map(tag => (
-                      <span key={tag} className="tag">{tag}</span>
-                    ))}
+          {/* Featured Project - Swiper 3D Card Stack showing multiple animations */}
+          <motion.div
+            className="featured-project-section"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <SwiperCardsSlider project={featuredProject} />
+          </motion.div>
+
+          {/* Other Projects - Grid Layout */}
+          <motion.div
+            className="other-projects"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="other-projects-title">More Projects</h3>
+            <div className="projects-grid">
+              {projects.slice(1).map((project, index) => (
+                <motion.div
+                  key={project.id}
+                  className="project-grid-card"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ delay: index * 0.1, duration: 0.4 }}
+                  whileHover={{
+                    y: -8,
+                    boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
+                  }}
+                  onClick={() => handleProjectClick(project)}
+                >
+                  <div className="grid-card-image">
+                    <img src={project.thumbnail} alt={project.title} />
+                    <span className="grid-card-category">
+                      {project.category === 'lottie' ? 'Lottie' : 'Video'}
+                    </span>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                  <div className="grid-card-content">
+                    <h4>{project.title}</h4>
+                    <p>{project.client} &bull; {project.year}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
 
         {/* Colorful Stats Banner */}

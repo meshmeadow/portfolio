@@ -72,16 +72,83 @@
 
 .ctaButton {
   padding: 12px 28px;
-  background: var(--accent-gradient);
+  /* Glass with purple tint */
+  background: linear-gradient(
+    145deg,
+    rgba(168, 85, 247, 0.18) 0%,
+    rgba(168, 85, 247, 0.08) 50%,
+    rgba(168, 85, 247, 0.12) 100%
+  );
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   color: var(--text-primary);
   font-weight: 600;
   font-size: 0.95rem;
-  border-radius: 50px;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  border-radius: 20px;
+  /* 3D edge borders */
+  border: 1px solid transparent;
+  border-top-color: rgba(255, 255, 255, 0.5);
+  border-left-color: rgba(255, 255, 255, 0.35);
+  border-right-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease-out;
+  /* 3D shadow */
+  box-shadow:
+    0 1px 2px rgba(200, 160, 255, 0.15),
+    0 6px 24px rgba(0, 0, 0, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: visible;
+}
+
+/* Specular highlight */
+.ctaButton::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 14px;
+  width: 28px;
+  height: 6px;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.5) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Chromatic refraction */
+.ctaButton::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 21px;
+  background: linear-gradient(
+    135deg,
+    rgba(220, 180, 255, 0.12) 0%,
+    transparent 35%,
+    transparent 65%,
+    rgba(180, 200, 255, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
 }
 
 .ctaButton:hover {
-  box-shadow: 0 0 30px var(--glow-primary);
+  transform: translateY(-2px);
+  background: linear-gradient(
+    145deg,
+    rgba(168, 85, 247, 0.25) 0%,
+    rgba(168, 85, 247, 0.14) 50%,
+    rgba(168, 85, 247, 0.18) 100%
+  );
+  border-top-color: rgba(255, 255, 255, 0.6);
+  border-left-color: rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 1px 3px rgba(200, 160, 255, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    0 3px 8px rgba(0, 0, 0, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.08);
 }
 
 .mobileMenuButton {
@@ -147,12 +214,64 @@
 .mobileCta {
   margin-top: 8px;
   padding: 16px 28px;
-  background: var(--accent-gradient);
+  /* Glass with purple tint */
+  background: linear-gradient(
+    145deg,
+    rgba(168, 85, 247, 0.18) 0%,
+    rgba(168, 85, 247, 0.08) 50%,
+    rgba(168, 85, 247, 0.12) 100%
+  );
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   color: var(--text-primary);
   font-weight: 600;
   font-size: 1rem;
-  border-radius: 50px;
+  border-radius: 20px;
+  /* 3D edge borders */
+  border: 1px solid transparent;
+  border-top-color: rgba(255, 255, 255, 0.5);
+  border-left-color: rgba(255, 255, 255, 0.35);
+  border-right-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(0, 0, 0, 0.12);
   text-align: center;
+  /* 3D shadow */
+  box-shadow:
+    0 1px 2px rgba(200, 160, 255, 0.15),
+    0 6px 24px rgba(0, 0, 0, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+/* Specular highlight */
+.mobileCta::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 16px;
+  width: 32px;
+  height: 7px;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.5) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Chromatic refraction */
+.mobileCta::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 21px;
+  background: linear-gradient(
+    135deg,
+    rgba(220, 180, 255, 0.12) 0%,
+    transparent 35%,
+    transparent 65%,
+    rgba(180, 200, 255, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
 }
 
 @media (max-width: 768px) {

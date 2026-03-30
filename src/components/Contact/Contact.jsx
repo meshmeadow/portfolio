@@ -176,7 +176,7 @@ const Contact = () => {
 
       <footer className={styles.footer}>
         <div className="container">
-          <p>© 2024 Motion Designer. Crafted with passion.</p>
+          <p>© 2026 Motion Designer. Crafted with passion.</p>
         </div>
       </footer>
     </section>

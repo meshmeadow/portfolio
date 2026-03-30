@@ -1,14 +1,43 @@
+// Featured project with multiple animations/screens to showcase in card stack
+export const featuredProject = {
+  id: 1,
+  title: "Flavours of Punjab",
+  category: "lottie",
+  description: "Vibrant motion graphics celebrating the rich culinary heritage of Punjab.",
+  client: "Personal Project",
+  year: "2024",
+  tags: ["Lottie", "After Effects", "Motion Graphics"],
+  // Multiple animations/screens for this project
+  animations: [
+    {
+      id: 'anim-1',
+      title: "Flavours of Punjab",
+      video: "/videos/flavours-punjab.mp4",
+    },
+    {
+      id: 'anim-2',
+      title: "T20 World Cup",
+      video: "/videos/t20-world-cup.mp4",
+    },
+    {
+      id: 'anim-3',
+      title: "Onam",
+      video: "/videos/onam.mp4",
+    },
+    {
+      id: 'anim-4',
+      title: "Republic Day",
+      video: "/videos/republic-day.mp4",
+    },
+    {
+      id: 'anim-5',
+      title: "Animation 5",
+      image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&h=800&fit=crop",
+    },
+  ]
+};
+
 export const projects = [
-  {
-    id: 1,
-    title: "Fintech App Onboarding",
-    category: "lottie",
-    description: "Seamless onboarding animations for a fintech mobile app, featuring smooth transitions and micro-interactions.",
-    thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop",
-    tags: ["Lottie", "After Effects", "Mobile"],
-    year: "2024",
-    client: "PayFlow"
-  },
   {
     id: 2,
     title: "E-commerce Product Launch",
