@@ -1,10 +1,10 @@
 import { useRef, useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCards } from 'swiper/modules';
+import { EffectCoverflow, Autoplay } from 'swiper/modules';
 
 // Import Swiper styles
 import 'swiper/css';
-import 'swiper/css/effect-cards';
+import 'swiper/css/effect-coverflow';
 
 import './SwiperCardsSlider.css';
 
@@ -30,7 +30,7 @@ const SwiperCardsSlider = ({ project }) => {
   if (!project || !project.animations) return null;
 
   return (
-    <div className="swiper-cards-container">
+    <div className="swiper-coverflow-container">
       {/* Project Info */}
       <div className="swiper-project-info">
         <span className="swiper-project-category">
@@ -41,21 +41,28 @@ const SwiperCardsSlider = ({ project }) => {
       </div>
 
       <Swiper
-        effect={'cards'}
+        effect={'coverflow'}
         grabCursor={true}
-        modules={[EffectCards]}
-        className="swiper-cards"
-        speed={300}
+        centeredSlides={true}
+        slidesPerView={5}
+        modules={[EffectCoverflow, Autoplay]}
+        className="swiper-coverflow"
+        speed={400}
         loop={true}
-        cardsEffect={{
-          slideShadows: true,
-          perSlideOffset: 10,
-          perSlideRotate: 3,
-          rotate: true,
+        loopAdditionalSlides={5}
+        autoplay={{
+          delay: 3000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
         }}
-        touchEventsTarget="container"
-        simulateTouch={true}
-        allowTouchMove={true}
+        coverflowEffect={{
+          rotate: 0,
+          stretch: -150,
+          depth: 300,
+          modifier: 1,
+          scale: 0.85,
+          slideShadows: false,
+        }}
         onSwiper={(swiper) => { swiperRef.current = swiper; }}
         onSlideChange={handleSlideChange}
       >

@@ -261,6 +261,24 @@ function App() {
 
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
+  // Hero zoom IN effect - scroll-based transforms
+  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 2.5]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.12, 0.18], [1, 1, 0]);
+  const heroY = useTransform(scrollYProgress, [0, 0.15], [0, -100]);
+
+  // Smooth spring versions for the hero zoom
+  const smoothHeroScale = useSpring(heroScale, { stiffness: 80, damping: 25 });
+  const smoothHeroOpacity = useSpring(heroOpacity, { stiffness: 100, damping: 30 });
+  const smoothHeroY = useSpring(heroY, { stiffness: 80, damping: 25 });
+
+  // Work section zoom OUT effect - starts zoomed in, scales down to normal
+  const workScale = useTransform(scrollYProgress, [0.12, 0.25], [2.5, 1]);
+  const workOpacity = useTransform(scrollYProgress, [0.12, 0.2], [0, 1]);
+
+  // Smooth spring versions for work zoom
+  const smoothWorkScale = useSpring(workScale, { stiffness: 80, damping: 25 });
+  const smoothWorkOpacity = useSpring(workOpacity, { stiffness: 100, damping: 30 });
+
   // Parallax values
   const y1 = useTransform(smoothProgress, [0, 1], [0, -500]);
 
@@ -323,6 +341,9 @@ function App() {
 
       {/* Vanta Clouds Background */}
       <div ref={vantaRef} className="vanta-clouds-background" />
+
+      {/* Pink Background Below Clouds */}
+      <div className="pink-background" />
 
       {/* Soft Checkerboard Grid Overlay - Sky Section Only */}
       <div className="sky-grid-overlay" style={{ opacity: checkerOpacity }}>
@@ -434,11 +455,17 @@ function App() {
       {/* Main Content - Continuous Scroll */}
       <div className="scroll-content">
 
-        {/* Hero Area */}
-        <motion.div
-          className="hero-area"
-          style={{ y: y1 }}
-        >
+        {/* Hero Section - Wrapper for scroll zoom journey */}
+        <div className="hero-section">
+          {/* Hero Area - Scroll Zoom Effect */}
+          <motion.div
+            className="hero-area"
+            style={{
+              scale: smoothHeroScale,
+              opacity: smoothHeroOpacity,
+              y: smoothHeroY,
+            }}
+          >
           <motion.h1
             className={`hero-title bounce-text ${isTextAnimating ? 'animating' : ''}`}
             initial={{ opacity: 0, y: 100 }}
@@ -451,15 +478,22 @@ function App() {
                 <span key={i} className="text-star">·</span>
               ))}
             </div>
-            {'making things move'.split('').map((letter, i) => (
-              <span
-                key={i}
-                className="bounce-letter"
-                style={{ animationDelay: `${i * 0.05}s` }}
-              >
-                {letter === ' ' ? '\u00A0' : letter}
-              </span>
-            ))}
+            {'making things move'.split(' ').map((word, wordIndex) => {
+              const letterOffset = 'making things move'.split(' ').slice(0, wordIndex).join(' ').length + wordIndex;
+              return (
+                <span key={wordIndex} className="bounce-word">
+                  {word.split('').map((letter, i) => (
+                    <span
+                      key={i}
+                      className="bounce-letter"
+                      style={{ animationDelay: `${(letterOffset + i) * 0.05}s` }}
+                    >
+                      {letter}
+                    </span>
+                  ))}
+                </span>
+              );
+            })}
             <span className="thoughtfully-text">thoughtfully</span>
           </motion.h1>
 
@@ -489,9 +523,17 @@ function App() {
             </motion.button>
           </motion.div>
         </motion.div>
+        </div> {/* End hero-section */}
 
         {/* Work Section - Featured Card Stack + Project Grid */}
-        <div className="work-area" id="work">
+        <motion.div
+          className="work-area"
+          id="work"
+          style={{
+            scale: smoothWorkScale,
+            opacity: smoothWorkOpacity,
+          }}
+        >
           <motion.div
             className="section-header"
             initial={{ opacity: 0, y: 50 }}
@@ -550,7 +592,7 @@ function App() {
               ))}
             </div>
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Colorful Stats Banner */}
         <motion.div

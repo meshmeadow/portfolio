@@ -61,6 +61,15 @@
   overflow: hidden;
 }
 
+/* Pink background below clouds - gradient fade from clouds to pink */
+.pink-background {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, transparent 50%, #F8A5C2 80%, #F8A5C2 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* ==================== SKY GRID OVERLAY ==================== */
 .sky-grid-overlay {
   position: fixed;
@@ -585,15 +594,25 @@
   z-index: 10;
 }
 
+/* Hero Section Wrapper - creates scroll space for zoom effect */
+.hero-section {
+  height: 200vh; /* Extra scroll space for the zoom journey */
+  position: relative;
+}
+
 /* ==================== HERO AREA ==================== */
 .hero-area {
-  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: clamp(80px, 15vh, 120px) clamp(16px, 4vw, 24px) clamp(60px, 10vh, 80px);
+  transform-origin: center center;
+  will-change: transform, opacity;
 }
 
 .hero-badge {
@@ -690,6 +709,16 @@
 
 .bounce-text.animating {
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.bounce-word {
+  display: inline-block;
+  white-space: nowrap;
+  margin-right: 0.3em;
+}
+
+.bounce-word:last-child {
+  margin-right: 0;
 }
 
 .bounce-letter {
@@ -1075,6 +1104,8 @@
   padding: clamp(24px, 5vw, 40px) clamp(16px, 4vw, 24px) clamp(60px, 10vw, 100px);
   max-width: 1200px;
   margin: 0 auto;
+  transform-origin: center top;
+  will-change: transform, opacity;
 }
 
 /* Featured Project Section - Swiper Card Stack */
@@ -2270,6 +2301,19 @@
 
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
+  .hero-title {
+    font-size: clamp(2.2rem, 9vw, 3.5rem);
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    padding: 0 20px;
+  }
+
+  .thoughtfully-text {
+    font-size: clamp(2rem, 8vw, 3rem) !important;
+  }
+
   .app,
   .app * {
     cursor: auto !important;
@@ -2361,7 +2405,11 @@
   }
 
   .hero-area {
-    padding: 100px 20px 60px;
+    padding: 80px 20px 60px;
+  }
+
+  .hero-section {
+    height: 180vh;
   }
 
   .hero-cta {
@@ -2435,6 +2483,19 @@
 }
 
 @media (max-width: 480px) {
+  .hero-title {
+    font-size: clamp(1.8rem, 10vw, 2.5rem);
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    padding: 0 15px;
+  }
+
+  .thoughtfully-text {
+    font-size: clamp(1.5rem, 7vw, 2rem) !important;
+  }
+
   .floating-nav {
     top: 10px;
     width: calc(100% - 20px);
@@ -2488,6 +2549,18 @@
 }
 
 @media (max-width: 360px) {
+  .hero-title {
+    font-size: clamp(1.5rem, 9vw, 2rem);
+  }
+
+  .thoughtfully-text {
+    font-size: clamp(1.2rem, 6vw, 1.5rem) !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.85rem;
+  }
+
   .floating-nav {
     top: 8px;
     padding: 6px 10px;

@@ -1,10 +1,10 @@
-/* Swiper Cards Container */
-.swiper-cards-container {
+/* Coverflow Container */
+.swiper-coverflow-container {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   padding: 20px;
 }
 
@@ -41,55 +41,41 @@
   margin: 0;
 }
 
-/* Swiper Cards - Square 1:1 to match video */
-.swiper-cards {
-  width: min(520px, 90vw);
-  height: min(520px, 90vw);
-  padding: 30px 0;
-  cursor: grab;
+/* Coverflow Swiper */
+.swiper-coverflow {
+  width: 100%;
+  max-width: 1000px;
+  padding: 40px 0;
+  perspective: 1200px;
 }
 
-.swiper-cards:active {
-  cursor: grabbing;
+/* Individual Slide */
+.swiper-coverflow .swiper-slide {
+  width: 600px;
+  aspect-ratio: 1 / 1;
+  border-radius: 24px;
+  overflow: visible;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
-/* Individual Card Slide */
-.swiper-card-slide {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  background: transparent;
-  overflow: visible !important;
-  user-select: none;
-  -webkit-user-select: none;
-  padding: 15px;
+/* Active slide - larger and elevated */
+.swiper-coverflow .swiper-slide-active {
+  z-index: 10;
 }
 
-/* Card Wrapper - handles hover transforms */
+.swiper-coverflow .swiper-slide-active .swiper-card-wrapper {
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Wrapper */
 .swiper-card-wrapper {
   width: 100%;
   height: 100%;
-  border-radius: 20px;
+  border-radius: 24px;
   overflow: hidden;
   background: #fff;
-  box-shadow:
-    0 30px 60px -15px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
-}
-
-/* Hover effect on active card */
-.swiper-card-slide.swiper-slide-active .swiper-card-wrapper:hover {
-  transform: scale(1.05);
-  box-shadow:
-    0 50px 100px -25px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(255, 255, 255, 0.15);
-}
-
-/* Ensure swiper allows overflow */
-.swiper-cards .swiper-wrapper {
-  overflow: visible !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.4s ease;
 }
 
 /* Card Content */
@@ -131,8 +117,7 @@
 /* Swipe Hint */
 .swiper-hint {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: rgba(100, 100, 100, 0.7);
   margin: 0;
 }
 
@@ -155,39 +140,41 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Swiper shadow customization - softer */
-.swiper-cards .swiper-slide-shadow {
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.05),
-    rgba(0, 0, 0, 0.15)
-  );
-  border-radius: 20px;
+/* Tablet Adjustments */
+@media (max-width: 768px) {
+  .swiper-project-title {
+    font-size: 1.5rem;
+  }
 }
 
 /* Mobile Adjustments */
 @media (max-width: 480px) {
-  .swiper-cards {
-    width: min(380px, 92vw);
-    height: min(380px, 92vw);
-  }
-
   .swiper-project-title {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
 
   .swiper-card-label {
-    padding: 16px;
+    padding: 12px;
   }
 
   .swiper-card-label span {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .swiper-project-category {
+    font-size: 0.7rem;
+    padding: 4px 12px;
+  }
+
+  .swiper-tag {
+    padding: 4px 10px;
+    font-size: 0.75rem;
   }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .swiper-cards {
-    --swiper-cards-transition-duration: 0ms;
+  .swiper-coverflow .swiper-slide {
+    transition: none;
   }
 }
