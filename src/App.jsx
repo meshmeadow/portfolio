@@ -7,125 +7,192 @@ import SwiperCardsSlider from './components/SwiperCardsSlider/SwiperCardsSlider'
 import { projects, featuredProject, skills, tools } from './data/projects';
 import './App.css';
 
-// Custom Star Cursor with Stardust Trail - Dreamy Pastel Theme
-const StarCursor = () => {
+// Context-aware Arrowhead Cursor - Dreamy Pastel Theme
+const CustomCursor = ({ isLoading = false }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [trail, setTrail] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
+  const [cursorState, setCursorState] = useState('default'); // default, clickable, text, grab, grabbing, loading
+
+  // Detect what element is under the cursor
+  const detectCursorState = (e) => {
+    const target = e.target;
+    const clickable = target.closest('button, a, [role="button"], .project-grid-card, .swiper-slide, .nav-link, .social-link, .skill-bubble, .stat-item, .tool-pill');
+    const textInput = target.closest('input, textarea');
+    const draggable = target.closest('.swiper-coverflow');
+
+    if (textInput) return 'text';
+    if (draggable && e.buttons === 1) return 'grabbing';
+    if (draggable) return 'grab';
+    if (clickable) return 'clickable';
+    return 'default';
+  };
 
   useEffect(() => {
     if ('ontouchstart' in window) return;
 
     const handleMouseMove = (e) => {
-      const newPos = { x: e.clientX, y: e.clientY, id: Date.now() };
-      setMousePosition(newPos);
+      setMousePosition({ x: e.clientX, y: e.clientY });
       setIsVisible(true);
+      setCursorState(detectCursorState(e));
+    };
 
-      setTrail(prev => {
-        const updated = [...prev, { ...newPos, opacity: 1, scale: 1 }];
-        return updated.slice(-20);
-      });
+    const handleMouseDown = (e) => {
+      if (e.target.closest('.swiper-coverflow')) {
+        setCursorState('grabbing');
+      }
+    };
+
+    const handleMouseUp = () => {
+      setCursorState(prev => prev === 'grabbing' ? 'grab' : prev);
     };
 
     const handleMouseLeave = () => setIsVisible(false);
     const handleMouseEnter = () => setIsVisible(true);
 
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('mouseenter', handleMouseEnter);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
   }, []);
 
-  // Fade out trail particles
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTrail(prev =>
-        prev
-          .map(p => ({ ...p, opacity: p.opacity - 0.08, scale: p.scale - 0.05 }))
-          .filter(p => p.opacity > 0)
-      );
-    }, 30);
-    return () => clearInterval(interval);
-  }, []);
+  // Override with loading state from props
+  const activeState = isLoading ? 'loading' : cursorState;
 
   if ('ontouchstart' in window || !isVisible) return null;
 
-  return (
-    <div className="star-cursor-container">
-      {/* Stardust Trail */}
-      {trail.map((particle, i) => (
-        <div
-          key={particle.id + i}
-          className="stardust-particle"
-          style={{
-            left: particle.x,
-            top: particle.y,
-            opacity: particle.opacity,
-            transform: `translate(-50%, -50%) scale(${particle.scale})`,
-          }}
-        >
-          ✦
-        </div>
-      ))}
+  // Cursor variants for different states
+  const cursorVariants = {
+    default: { scale: 1 },
+    clickable: { scale: 1.2 },
+    text: { scale: 1, scaleX: 0.5 },
+    grab: { scale: 1.1 },
+    grabbing: { scale: 0.9 },
+    loading: { scale: 1 },
+  };
 
-      {/* Main Star Cursor */}
+  // Single consistent pink color for all states
+  const colors = { primary: '#FF6B9D', secondary: '#D63384', glow: 'rgba(255, 107, 157, 0.5)' };
+
+  return (
+    <div className="custom-cursor-container">
+      {/* Cursor glow/aura */}
       <motion.div
-        className="star-cursor"
+        className="cursor-aura"
         animate={{
-          x: mousePosition.x - 15,
-          y: mousePosition.y - 15,
-          rotate: [0, 15, -15, 0],
+          x: mousePosition.x - 30,
+          y: mousePosition.y - 30,
+          scale: activeState === 'clickable' ? 1.5 : activeState === 'loading' ? [1, 1.3, 1] : 1,
+          opacity: activeState === 'clickable' ? 0.6 : 0.3,
+        }}
+        transition={{
+          x: { type: 'spring', stiffness: 150, damping: 15 },
+          y: { type: 'spring', stiffness: 150, damping: 15 },
+          scale: activeState === 'loading'
+            ? { duration: 1, repeat: Infinity, ease: 'easeInOut' }
+            : { type: 'spring', stiffness: 300, damping: 20 },
+        }}
+        style={{ background: colors.glow }}
+      />
+
+      {/* Main Chunky Arrow Cursor */}
+      <motion.div
+        className={`custom-cursor cursor-${activeState}`}
+        animate={{
+          x: mousePosition.x,
+          y: mousePosition.y,
+          ...cursorVariants[activeState],
+          rotate: activeState === 'loading' ? 360 : 0,
         }}
         transition={{
           x: { type: 'spring', stiffness: 500, damping: 28 },
           y: { type: 'spring', stiffness: 500, damping: 28 },
-          rotate: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+          scale: { type: 'spring', stiffness: 400, damping: 25 },
+          rotate: activeState === 'loading'
+            ? { duration: 1.5, repeat: Infinity, ease: 'linear' }
+            : { type: 'spring', stiffness: 300, damping: 20 },
         }}
       >
-        <svg viewBox="0 0 24 24" width="30" height="30">
+        <svg width="56" height="64" viewBox="0 0 28 32" fill="none">
           <defs>
-            <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FFB6D9" />
-              <stop offset="50%" stopColor="#FFC4E1" />
-              <stop offset="100%" stopColor="#E8B4D9" />
+            <linearGradient id={`arrowGradient-${activeState}`} x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stopColor={colors.primary} />
+              <stop offset="40%" stopColor={colors.primary} />
+              <stop offset="100%" stopColor={colors.secondary} />
             </linearGradient>
           </defs>
+          {/* Main arrow body */}
           <path
-            d="M12 0L14.59 8.41L23 11L14.59 13.59L12 22L9.41 13.59L1 11L9.41 8.41L12 0Z"
-            fill="url(#starGradient)"
-            stroke="#ffffff"
-            strokeWidth="0.8"
+            d="M3 4L3 23L8 18L12 27L16 25L11 17L20 17L3 4Z"
+            fill={`url(#arrowGradient-${activeState})`}
+            stroke="#1a1a2e"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+          {/* Light edge highlight (top-left) */}
+          <path
+            d="M4 6L4 20"
+            stroke="rgba(255,255,255,0.5)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Shine highlights */}
+          <path
+            d="M6 10L6 15"
+            stroke="rgba(255,255,255,0.8)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <circle
+            cx="8"
+            cy="17"
+            r="1.5"
+            fill="rgba(255,255,255,0.6)"
           />
         </svg>
-        <div className="cursor-sparkles">
-          {[...Array(4)].map((_, i) => (
-            <motion.span
-              key={i}
-              className="sparkle"
-              animate={{
-                scale: [0, 1, 0],
-                opacity: [0, 1, 0],
-              }}
-              transition={{
-                duration: 1,
-                repeat: Infinity,
-                delay: i * 0.25,
-              }}
-              style={{
-                top: `${['-10px', '50%', '110%', '50%'][i]}`,
-                left: `${['50%', '110%', '50%', '-10px'][i]}`,
-              }}
-            >
-              ✧
-            </motion.span>
-          ))}
-        </div>
+
+        {/* Loading dots */}
+        {activeState === 'loading' && (
+          <div className="cursor-loading-dots">
+            {[0, 1, 2].map(i => (
+              <motion.span
+                key={i}
+                animate={{ opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
+                transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+              />
+            ))}
+          </div>
+        )}
       </motion.div>
+
+      {/* Text cursor beam */}
+      {activeState === 'text' && (
+        <motion.div
+          className="cursor-text-beam"
+          initial={{ scaleY: 0 }}
+          animate={{
+            x: mousePosition.x - 1,
+            y: mousePosition.y - 10,
+            scaleY: 1,
+            opacity: [1, 0.5, 1],
+          }}
+          transition={{
+            x: { type: 'spring', stiffness: 500, damping: 28 },
+            y: { type: 'spring', stiffness: 500, damping: 28 },
+            opacity: { duration: 0.8, repeat: Infinity },
+          }}
+        />
+      )}
     </div>
   );
 };
@@ -178,6 +245,15 @@ function App() {
   const { scrollYProgress } = useScroll();
   const [selectedProject, setSelectedProject] = useState(null);
   const [isTextAnimating, setIsTextAnimating] = useState(false);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+
+  // Cycling words for the hero
+  const cyclingWords = [
+    'thoughtfully',
+    'obsessively',
+    "'cause why not",
+    'sipping my iced coffee?',
+  ];
 
   // Modal expansion state
   const [cardRect, setCardRect] = useState(null);
@@ -232,6 +308,15 @@ function App() {
       setTimeout(() => setFormState('idle'), 3000);
     }
   };
+
+  // Cycle through words
+  useEffect(() => {
+    const wordInterval = setInterval(() => {
+      setCurrentWordIndex((prev) => (prev + 1) % cyclingWords.length);
+    }, 3000); // Change word every 3 seconds
+
+    return () => clearInterval(wordInterval);
+  }, []);
 
   // Track active section based on scroll position
   useEffect(() => {
@@ -337,7 +422,7 @@ function App() {
   return (
     <div className="app" ref={containerRef}>
       {/* Star Cursor */}
-      <StarCursor />
+      <CustomCursor isLoading={formState === 'sending'} />
 
       {/* Vanta Clouds Background */}
       <div ref={vantaRef} className="vanta-clouds-background" />
@@ -381,38 +466,9 @@ function App() {
         animate={{ y: 0 }}
         transition={{ delay: 0.5, type: 'spring' }}
       >
-        <motion.span
-          className="nav-logo"
-          whileHover={{ scale: 1.08 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        >
-          <span className="nav-logo-stardust">
-            {/* First orbiting trail - 8 stars */}
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            {/* Second orbiting trail (reverse) - 6 stars */}
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            <span className="orbit-star"></span>
-            {/* Twinkling static stars - 6 stars */}
-            <span className="twinkle-star"></span>
-            <span className="twinkle-star"></span>
-            <span className="twinkle-star"></span>
-            <span className="twinkle-star"></span>
-            <span className="twinkle-star"></span>
-            <span className="twinkle-star"></span>
-          </span>
+        <span className="nav-logo">
           meshmeadow
-        </motion.span>
+        </span>
 
         {/* Hamburger Button */}
         <button
@@ -494,17 +550,22 @@ function App() {
                 </span>
               );
             })}
-            <span className="thoughtfully-text">thoughtfully</span>
+            <span className="cycling-word-container">
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={currentWordIndex}
+                          className="thoughtfully-text"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                        >
+                          {cyclingWords[currentWordIndex]}
+                        </motion.span>
+                      </AnimatePresence>
+                    </span>
           </motion.h1>
 
-          <motion.p
-            className="hero-subtitle"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-          >
-            Crafting Lottie animations & marketing videos that make brands unforgettable
-          </motion.p>
 
           <motion.div
             className="hero-cta"
@@ -519,7 +580,7 @@ function App() {
               whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(255, 107, 157, 0.4)' }}
               whileTap={{ scale: 0.95 }}
             >
-              <span>Scroll to Explore</span>
+              <span>see my work</span>
             </motion.button>
           </motion.div>
         </motion.div>
@@ -540,9 +601,9 @@ function App() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="section-emoji">🎨</span>
-            <h2 className="section-title">Creative Work</h2>
-            <p className="section-desc">A collection of motion magic</p>
+            <span className="section-emoji">🎬</span>
+            <h2 className="section-title">the good stuff</h2>
+            <p className="section-desc">campaigns that made people stop scrolling</p>
           </motion.div>
 
           {/* Featured Project - Swiper 3D Card Stack showing multiple animations */}
@@ -555,43 +616,45 @@ function App() {
             <SwiperCardsSlider project={featuredProject} />
           </motion.div>
 
-          {/* Other Projects - Grid Layout */}
-          <motion.div
-            className="other-projects"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="other-projects-title">More Projects</h3>
-            <div className="projects-grid">
-              {projects.slice(1).map((project, index) => (
-                <motion.div
-                  key={project.id}
-                  className="project-grid-card"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ delay: index * 0.1, duration: 0.4 }}
-                  whileHover={{
-                    y: -8,
-                    boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
-                  }}
-                  onClick={() => handleProjectClick(project)}
-                >
-                  <div className="grid-card-image">
-                    <img src={project.thumbnail} alt={project.title} />
-                    <span className="grid-card-category">
-                      {project.category === 'lottie' ? 'Lottie' : 'Video'}
-                    </span>
-                  </div>
-                  <div className="grid-card-content">
-                    <h4>{project.title}</h4>
-                    <p>{project.client} &bull; {project.year}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+          {/* Other Projects - Grid Layout (hidden when empty) */}
+          {projects.length > 1 && (
+            <motion.div
+              className="other-projects"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="other-projects-title">more stuff</h3>
+              <div className="projects-grid">
+                {projects.slice(1).map((project, index) => (
+                  <motion.div
+                    key={project.id}
+                    className="project-grid-card"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    transition={{ delay: index * 0.1, duration: 0.4 }}
+                    whileHover={{
+                      y: -8,
+                      boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
+                    }}
+                    onClick={() => handleProjectClick(project)}
+                  >
+                    <div className="grid-card-image">
+                      <img src={project.thumbnail} alt={project.title} />
+                      <span className="grid-card-category">
+                        {project.category === 'lottie' ? 'Lottie' : 'Video'}
+                      </span>
+                    </div>
+                    <div className="grid-card-content">
+                      <h4>{project.title}</h4>
+                      <p>{project.client} &bull; {project.year}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Colorful Stats Banner */}
@@ -602,10 +665,10 @@ function App() {
           viewport={{ once: true }}
         >
           {[
-            { number: '50+', label: 'Projects', emoji: '🎨', color: '#FF6B9D' },
-            { number: '30+', label: 'Happy Clients', emoji: '😊', color: '#A855F7' },
-            { number: '5+', label: 'Years Experience', emoji: '⭐', color: '#3B82F6' },
-            { number: '∞', label: 'Creativity', emoji: '✨', color: '#10B981' },
+            { number: '4', label: 'years of wiggles', emoji: '✨', color: '#FF6B9D' },
+            { number: '1st', label: 'motion hire @ bistro', emoji: '🏆', color: '#A855F7' },
+            { number: '0→1', label: 'brand motion built', emoji: '🚀', color: '#3B82F6' },
+            { number: '∞', label: 'cups of chai', emoji: '☕', color: '#10B981' },
           ].map((stat, i) => (
             <motion.div
               key={i}
@@ -675,17 +738,17 @@ function App() {
               </div>
             </div>
             <div className="about-text">
-              <h2>Hey there! 👋</h2>
+              <h2>the person behind the pixels 👋</h2>
               <p className="highlight">
-                I'm a motion designer who believes animations should spark joy and tell stories.
+                engineer by degree, animator by obsession.
               </p>
               <p>
-                With 5+ years of experience, I specialize in creating Lottie animations
-                that make apps feel alive and marketing videos that capture hearts.
+                walked out of IIT Guwahati and straight into making things wiggle for a living.
+                currently the motion wizard at Bistro by Blinkit — where I built the entire visual
+                language from zero. every loader, every campaign, every delightful little bounce.
               </p>
               <p>
-                When I'm not animating, you'll find me chasing sunsets,
-                experimenting with new tools, or teaching motion design workshops.
+                if it moves on your screen and makes you smile, that's the goal.
               </p>
             </div>
           </motion.div>
@@ -697,7 +760,7 @@ function App() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h3>🛠️ My Toolkit</h3>
+            <h3>🛠️ what i play with</h3>
             <div className="skills-bubbles">
               {skills.map((skill, i) => (
                 <motion.div
@@ -764,8 +827,8 @@ function App() {
               >
                 💌
               </motion.span>
-              <h2>Let's Create Magic Together!</h2>
-              <p>Got a project in mind? I'd love to hear about it.</p>
+              <h2>let's make something move</h2>
+              <p>got a wild idea? a boring brief that needs life? let's talk.</p>
             </div>
 
             <form className="contact-form" onSubmit={handleFormSubmit}>
@@ -929,14 +992,16 @@ function App() {
 
             <div className="social-links">
               {[
-                { name: 'Dribbble', emoji: '🏀', color: '#EA4C89' },
-                { name: 'Behance', emoji: '🎨', color: '#1769FF' },
-                { name: 'LinkedIn', emoji: '💼', color: '#0A66C2' },
-                { name: 'Twitter', emoji: '🐦', color: '#1DA1F2' },
+                { name: 'LinkedIn', emoji: '💼', color: '#0A66C2', url: 'https://www.linkedin.com/in/shalmaligaikwad/' },
+                { name: 'Instagram', emoji: '📸', color: '#E4405F', url: 'https://www.instagram.com/meshmeadow/' },
+                { name: 'YouTube', emoji: '🎬', color: '#FF0000', url: 'https://www.youtube.com/@meshmeadow' },
+                { name: 'ArtStation', emoji: '🎨', color: '#13AFF0', url: 'https://www.artstation.com/meshmeadow' },
               ].map((social, i) => (
                 <motion.a
                   key={social.name}
-                  href="#"
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="social-link"
                   whileHover={{ scale: 1.1, y: -5 }}
                   style={{ background: `${social.color}22`, borderColor: social.color }}
@@ -956,8 +1021,8 @@ function App() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
           >
-            <p>Made with 💖 and lots of ☕</p>
-            <p className="footer-copyright">© 2026 Motion Designer</p>
+            <p>made with too much chai and not enough sleep</p>
+            <p className="footer-copyright">© 2026 meshmeadow</p>
           </motion.div>
         </footer>
       </div>

@@ -1,13 +1,12 @@
-// Featured project with multiple animations/screens to showcase in card stack
+// Featured project - Bistro by Blinkit Campaign Animations
 export const featuredProject = {
   id: 1,
-  title: "Flavours of Punjab",
-  category: "lottie",
-  description: "Vibrant motion graphics celebrating the rich culinary heritage of Punjab.",
-  client: "Personal Project",
-  year: "2024",
-  tags: ["Lottie", "After Effects", "Motion Graphics"],
-  // Multiple animations/screens for this project
+  title: "Bistro by Blinkit",
+  category: "motion",
+  description: "the whole motion universe — from scratch. loaders, celebrations, campaigns, vibes.",
+  client: "Bistro by Blinkit",
+  year: "2024-25",
+  tags: ["motion identity", "campaigns", "in-app"],
   animations: [
     {
       id: 'anim-1',
@@ -29,83 +28,55 @@ export const featuredProject = {
       title: "Republic Day",
       video: "/videos/republic-day.mp4",
     },
+  ]
+};
+
+// UI Micro-interactions Project
+export const uiMicroInteractions = {
+  id: 2,
+  title: "UI Micro-interactions",
+  category: "lottie",
+  description: "buttons, cards, and tiny delights that make the app feel alive.",
+  client: "Bistro by Blinkit",
+  year: "2024-25",
+  tags: ["micro-interactions", "ui motion", "lottie"],
+  thumbnail: "/images/ui-micro-thumb.jpg", // Add your thumbnail
+  animations: [
     {
-      id: 'anim-5',
-      title: "Animation 5",
-      image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&h=800&fit=crop",
+      id: 'ui-1',
+      title: "Button Animations",
+      video: "/videos/button-animations.mp4", // Replace with your file
     },
+    {
+      id: 'ui-2',
+      title: "Card Interactions",
+      video: "/videos/card-interactions.mp4", // Replace with your file
+    },
+    // Add more as needed
   ]
 };
 
 export const projects = [
-  {
-    id: 2,
-    title: "E-commerce Product Launch",
-    category: "video",
-    description: "Dynamic product launch video showcasing features with kinetic typography and 3D elements.",
-    thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop",
-    tags: ["Video", "After Effects", "Cinema 4D"],
-    year: "2024",
-    client: "ShopX"
-  },
-  {
-    id: 3,
-    title: "Health App Illustrations",
-    category: "lottie",
-    description: "Animated illustrations for a wellness app, bringing health data to life with playful animations.",
-    thumbnail: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&h=400&fit=crop",
-    tags: ["Lottie", "Illustration", "Mobile"],
-    year: "2024",
-    client: "VitalityPlus"
-  },
-  {
-    id: 4,
-    title: "Tech Startup Brand Video",
-    category: "video",
-    description: "Brand story video combining live footage with motion graphics to communicate innovation.",
-    thumbnail: "https://images.unsplash.com/photo-1535016120720-40c646be5580?w=600&h=400&fit=crop",
-    tags: ["Video", "Branding", "Motion Graphics"],
-    year: "2023",
-    client: "NexGen AI"
-  },
-  {
-    id: 5,
-    title: "Loading & Success States",
-    category: "lottie",
-    description: "Collection of delightful loading spinners, success checkmarks, and error states for mobile apps.",
-    thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&h=400&fit=crop",
-    tags: ["Lottie", "UI/UX", "Micro-interactions"],
-    year: "2023",
-    client: "Various"
-  },
-  {
-    id: 6,
-    title: "Social Media Campaign",
-    category: "video",
-    description: "Series of eye-catching social media videos optimized for Instagram and TikTok engagement.",
-    thumbnail: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&h=400&fit=crop",
-    tags: ["Video", "Social Media", "Short Form"],
-    year: "2023",
-    client: "BrandBurst"
-  }
+  featuredProject,
+  uiMicroInteractions,
 ];
 
 export const skills = [
-  { name: "After Effects", level: 95 },
-  { name: "Lottie/Bodymovin", level: 90 },
-  { name: "Cinema 4D", level: 75 },
-  { name: "Figma", level: 85 },
-  { name: "Illustrator", level: 88 },
-  { name: "Premiere Pro", level: 82 }
+  { name: "2D Animation", level: 95 },
+  { name: "3D Animation", level: 88 },
+  { name: "Motion Graphics", level: 92 },
+  { name: "Visual Design", level: 85 },
+  { name: "Video Editing", level: 82 },
+  { name: "Graphic Design", level: 80 }
 ];
 
 export const tools = [
   "After Effects",
-  "Lottie",
-  "Cinema 4D",
-  "Figma",
-  "Illustrator",
-  "Premiere Pro",
   "Blender",
-  "Photoshop"
+  "Cinema 4D",
+  "Premiere Pro",
+  "Illustrator",
+  "Photoshop",
+  "Figma",
+  "Lottie"
 ];

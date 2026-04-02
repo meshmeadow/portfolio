@@ -1,6 +1,6 @@
 import { useRef, useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Autoplay } from 'swiper/modules';
+import { EffectCoverflow, Autoplay, FreeMode } from 'swiper/modules';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -44,12 +44,22 @@ const SwiperCardsSlider = ({ project }) => {
         effect={'coverflow'}
         grabCursor={true}
         centeredSlides={true}
-        slidesPerView={5}
-        modules={[EffectCoverflow, Autoplay]}
+        slideToClickedSlide={true}
+        slidesPerView={'auto'}
+        modules={[EffectCoverflow, Autoplay, FreeMode]}
         className="swiper-coverflow"
-        speed={400}
+        speed={600}
         loop={true}
-        loopAdditionalSlides={5}
+        loopedSlides={5}
+        loopAdditionalSlides={3}
+        touchRatio={1.5}
+        resistance={false}
+        freeMode={{
+          enabled: true,
+          sticky: false,
+          momentumRatio: 0.8,
+          momentumVelocityRatio: 0.8,
+        }}
         autoplay={{
           delay: 3000,
           disableOnInteraction: false,
@@ -57,9 +67,9 @@ const SwiperCardsSlider = ({ project }) => {
         }}
         coverflowEffect={{
           rotate: 0,
-          stretch: -150,
-          depth: 300,
-          modifier: 1,
+          stretch: 0,
+          depth: 150,
+          modifier: 2,
           scale: 0.85,
           slideShadows: false,
         }}
