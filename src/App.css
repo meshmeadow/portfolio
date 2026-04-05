@@ -440,17 +440,17 @@
   opacity: 0.8;
 }
 
-/* Active indicator dot */
+/* Active indicator line */
 .nav-active-indicator {
   position: absolute;
-  bottom: 4px;
+  bottom: 2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
+  width: 20px;
+  height: 2px;
   background: white;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  border-radius: 1px;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
 }
 
 /* Hamburger Menu */
@@ -1215,6 +1215,8 @@
   padding: clamp(48px, 8vw, 80px) clamp(16px, 4vw, 24px);
   max-width: 1000px;
   margin: 0 auto;
+  transform-origin: center top;
+  will-change: transform, opacity;
 }
 
 .about-card {
@@ -1364,6 +1366,8 @@
   padding: clamp(48px, 8vw, 80px) clamp(16px, 4vw, 24px) clamp(24px, 5vw, 40px);
   max-width: 800px;
   margin: 0 auto;
+  transform-origin: center top;
+  will-change: transform, opacity;
 }
 
 .contact-card {

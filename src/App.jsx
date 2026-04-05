@@ -364,6 +364,18 @@ function App() {
   const smoothWorkScale = useSpring(workScale, { stiffness: 80, damping: 25 });
   const smoothWorkOpacity = useSpring(workOpacity, { stiffness: 100, damping: 30 });
 
+  // About section zoom OUT effect
+  const aboutScale = useTransform(scrollYProgress, [0.45, 0.55], [1.3, 1]);
+  const aboutOpacity = useTransform(scrollYProgress, [0.45, 0.52], [0, 1]);
+  const smoothAboutScale = useSpring(aboutScale, { stiffness: 80, damping: 25 });
+  const smoothAboutOpacity = useSpring(aboutOpacity, { stiffness: 100, damping: 30 });
+
+  // Contact section zoom OUT effect
+  const contactScale = useTransform(scrollYProgress, [0.75, 0.85], [1.3, 1]);
+  const contactOpacity = useTransform(scrollYProgress, [0.75, 0.82], [0, 1]);
+  const smoothContactScale = useSpring(contactScale, { stiffness: 80, damping: 25 });
+  const smoothContactOpacity = useSpring(contactOpacity, { stiffness: 100, damping: 30 });
+
   // Parallax values
   const y1 = useTransform(smoothProgress, [0, 1], [0, -500]);
 
@@ -577,8 +589,9 @@ function App() {
               className="cta-button primary"
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(255, 107, 157, 0.4)' }}
+              whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <span>see my work</span>
             </motion.button>
@@ -688,7 +701,14 @@ function App() {
         </motion.div>
 
         {/* About Area */}
-        <div className="about-area" id="about">
+        <motion.div
+          className="about-area"
+          id="about"
+          style={{
+            scale: smoothAboutScale,
+            opacity: smoothAboutOpacity,
+          }}
+        >
           <motion.div
             className="about-card"
             initial={{ opacity: 0, x: -100 }}
@@ -809,10 +829,17 @@ function App() {
               </motion.span>
             ))}
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Contact Area */}
-        <div className="contact-area" id="contact">
+        <motion.div
+          className="contact-area"
+          id="contact"
+          style={{
+            scale: smoothContactScale,
+            opacity: smoothContactOpacity,
+          }}
+        >
           <motion.div
             className="contact-card"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -1012,7 +1039,7 @@ function App() {
               ))}
             </div>
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Footer */}
         <footer className="footer">
